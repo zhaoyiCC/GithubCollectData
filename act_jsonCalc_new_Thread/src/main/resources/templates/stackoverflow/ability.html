@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	data-layout-decorate="~{layout}">
+
+<head>
+<meta charset="utf-8">
+</head>
+
+<body>
+
+	<div layout:fragment="content">
+
+		<!-- page-intro start-->
+		<!-- ================ -->
+		<div class="page-intro">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-12">
+						<ol class="breadcrumb">
+							<li><i class="fa fa-home pr-10"></i><a href="/stackoverflow">Stackoverflow</a></li>
+							<li class="active">开发者能力排行</li>
+						</ol>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- page-intro end -->
+
+		<!-- main-container start -->
+		<!-- ================ -->
+		<section class="main-container">
+
+			<div class="container">
+			<div class="row">
+				<!-- main start -->
+				<!-- ================ -->
+				<div class="main col-md-12">
+					<form class="form-inline has-success has-feedback">
+						<label class="control-label" >选择能力标签:&nbsp</label>
+						<span class="input-group">
+							<input type="text" id="ability" list="ability-list" class="form-control" value=""/>
+							<a href="javascript:addAbility();"><i class="fa fa-plus form-control-feedback"></i></a>
+						</span>									
+					</form>						
+					<div style="margin:10px 20px 10px 30px">
+						<div style="min-height:40px" id="abilities">
+						<!-- html模板  start -->
+						<textarea style="display:none;" id="tag">							
+							<a class="crumb-select-item" href="#" rel="nofollow" title="$name$" id="tag_$name$">
+								<em>$name$</em> <i></i>
+							</a>
+						</textarea>							
+						<!-- html模板 end -->	
+						</div>
+						<button onclick="orderByAbility(0)" class="btn btn-default">搜索</button>
+					</div>	
+					
+					<div class="clearfix"></div>
+					
+					<div id="details" style="text-align:center">
+						<img name="loading" id="loading" src="/images/loader.gif" style="display:none; width: 200px; margin-left: 40%;"></img>	
+					</div>
+					<!-- html模板  start -->
+					<textarea style="display:none;" id="list-item">
+						<div class="list-with-image">
+							<div class="overlay-container">
+								<img src="$profileImageUrl$" alt="用户头像"> 
+								<a href="javascript:window.open('http://stackoverflow.com/users/$id$/$displayName$')" class="overlay small"> </a>
+							</div>
+							<button style="float:right;margin-top:0;" onclick="javascript:window.open('/stackoverflow/showUser?id=$id$')" class="btn btn-sm btn-dark">能力值</button>							
+							<h2><a href="javascript:window.open('http://stackoverflow.com/users/$id$/$displayName$')">$displayName$<small>[stackoverflow]</small></a></h2>
+							<p class="small">
+								<i class="fa fa-map-marker pr-10"></i>$location$ &nbsp&nbsp
+								<i class="fa fa-thumbs-up pr-10"></i>$upVotes$ &nbsp
+								<i class="fa fa-thumbs-down pr-10"></i>$downVotes$  &nbsp&nbsp&nbsp&nbsp  
+								$reputation$  REPUTATION
+							</p>
+						</div>
+					</textarea>							
+					<!-- html模板 end -->	
+					
+					<div  id="list" style="margin-top:20px">	</div>
+					
+					<div class="clearfix"></div>
+
+					<!-- pagination start -->
+					<ul class="pagination">
+						<li id="prePage"><a href="javascript:orderByAbility(-1);"><<</a></li>
+						<li class="active"><a id="currentPage" href="#">1<span class="sr-only">(current)</span></a></li>
+						<li id="nextPage"><a href="javascript:orderByAbility(1);">>></a></li>
+					</ul>
+					<!-- pagination end -->						
+				</div>
+				<!-- main end -->
+			</div>
+			</div>
+		</section>
+		<!-- main-container end -->
+
+	</div>
+	<!-- 修改目录 -->
+	<div layout:fragment="function">			
+	<script type="text/javascript">
+	
+	$(function() {
+		/* 选择Stackoverflow标签  */
+		$('#stackoverflow').addClass("active");
+	});
+
+	var abilities = [];
+	var tagTemp = $("#tag")[0].value, tagBox = $("#abilities")[0];
+	
+	var pageId = 0, hasMore = new Boolean(0), total = 0;
+	
+	function orderByAbility(type){
+		if (type === 0) {
+			pageId = 1;
+		}
+		else if (type === -1){
+			if (pageId < 2) return;
+			pageId -= 1;
+		}else if(type === 1){
+			if (hasMore == 0) return;
+			pageId += 1;
+		}
+
+		$("#loading")[0].style.display = "block";
+		
+		$.ajax({
+			type : "get",
+			async : false,
+			url : "/api/topcoder/SearchUser",
+			data : {
+				"tag" : abilities.join(','),
+				"pageId" : pageId,
+				"pageSize" : 10
+			},
+			dataType : "json",
+			success : function(data) {
+				if (data) {
+					var result = data.users;
+					hasMore = data.hasMore;
+					/* total = data.total_count;
+					$("#details").empty().append("共 <a>" + total + "</a> 个结果查询"); */
+					
+					var htmlList = '', htmlTemp = $("textarea")[0].value;				
+					result.forEach(function(object) {	
+						if(object.profileImageUrl.length==0){
+							object.profileImageUrl = "/images/avatar.jpg";
+						}
+					    htmlList += htmlTemp.temp(object);
+					});
+
+					$("#loading")[0].style.display = "none";
+					/* htmlList就是我们需要的HTML代码啦！ */
+					$("#list")[0].innerHTML = htmlList; 
+					/* 处理页码显示  */
+					$("#currentPage")[0].innerText = pageId;
+					if(pageId === 1){
+						$("#prePage").addClass("disabled");
+					}else {
+						$("#prePage").removeClass("disabled");
+					}
+					if(hasMore == 0){
+						$("#nextPage").addClass("disabled");
+					}else{
+						$("#nextPage").removeClass("disabled");
+					}
+				} else {
+					$("#details").empty().append("<h2>您查找的用户\"" + name + "\"不存在，请重新查找</h2>");
+				}
+			},
+			error : function(errorMsg) {
+				$("#details").empty().append("<h2>对不起，服务器请求失败！</h2>");
+			}
+		});
+	}
+	
+	</script>			
+	<datalist id="ability-list" >					
+	 <option value="javascript"/>
+	 <option value="java"/>
+	 <option value="c#"/>
+	 <option value="php"/>
+	 <option value="android"/>
+	 <option value="jquery"/>
+	 <option value="python"/>
+	 <option value="html"/>
+	 <option value="c++"/>
+	 <option value="ios"/>
+	 <option value="css"/>
+	 <option value="mysql"/>
+	 <option value="sql"/>
+	 <option value="asp.net"/>
+	 <option value="objective-c"/>
+	 <option value="ruby-on-rails"/>
+	 <option value=".net"/>
+	 <option value="c"/>
+	 <option value="angularjs"/>
+	 <option value="arrays"/>
+	 <option value="iphone"/>
+	 <option value="sql-server"/>
+	 <option value="json"/>
+	 <option value="ruby"/>
+	 <option value="r"/>
+	 <option value="node.js"/>
+	 <option value="ajax"/>
+	 <option value="regex"/>
+	 <option value="xml"/>
+	 <option value="asp.net-mvc"/>
+	 <option value="linux"/>
+	 <option value="swift"/>
+	 <option value="django"/>
+	 <option value="wpf"/>
+	 <option value="database"/>
+	 <option value="excel"/> 
+	</datalist>
+	</div>
+
+
+</body>
+
+</html>

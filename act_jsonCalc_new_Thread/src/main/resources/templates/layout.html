@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<!--[if IE 9]> <html lang="en" class="ie9"> <![endif]-->
+<!--[if !IE]><!-->
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org"	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout">
+<!--<![endif]-->
+
+<head>
+<meta charset="utf-8">
+<title>开发者知识库</title>
+<meta name="description" content="开发者知识库——以Github,Stackoverflow,Topcoder和CSDN为研究平台的协助软件开发的开发者知识库">
+<meta name="author" content="北航计算机学院课题组">
+
+<!-- Mobile Meta -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Favicon -->
+<link rel="shortcut icon" href="/images/favicon.ico">
+
+<!-- Bootstrap core CSS -->
+<link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Font Awesome CSS -->
+<link href="/fonts/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+
+<!-- Fontello CSS -->
+<link href="/fonts/fontello/css/fontello.css" rel="stylesheet">
+
+<!-- Plugins -->
+<link href="/plugins/rs-plugin/css/settings.css" media="screen"
+	rel="stylesheet">
+<link href="/plugins/rs-plugin/css/extralayers.css" media="screen"
+	rel="stylesheet">
+<link href="/plugins/magnific-popup/magnific-popup.css" rel="stylesheet">
+<link href="/plugins/owl-carousel/owl.carousel.css" rel="stylesheet">
+<link href="/css/animations.css" rel="stylesheet">
+
+<!-- iDea core CSS file -->
+<link href="/css/style.css" rel="stylesheet">
+
+<!-- Color Scheme (In order to change the color scheme, replace the red.css with the color scheme that you prefer)-->
+<link href="/css/skins/red.css" rel="stylesheet">
+
+<!-- Custom css -->
+<link href="/css/custom.css" rel="stylesheet">
+
+<!-- Jquery and Bootstap core js files -->
+<script type="text/javascript" src="/plugins/jquery.min.js"></script>
+<script type="text/javascript" src="/bootstrap/js/bootstrap.min.js"></script>
+
+<!-- Echarts -->
+<script src="/js/dist/echarts.min.js"></script>
+<script src="/js/dist/echarts.js"></script>
+
+<!-- js函数 -->
+<script type="text/javascript" src="/js/control.js"></script>	
+
+</head>
+<!-- body classes: 
+			"boxed": boxed layout mode e.g. <body class="boxed">
+			"pattern-1 ... pattern-9": background patterns for boxed layout mode e.g. <body class="boxed pattern-1"> 
+	-->
+<body class="front">
+	<!-- scrollToTop -->
+	<!-- ================ -->
+	<div class="scrollToTop">
+		<i class="icon-up-open-big">开发者知识库</i>
+	</div>
+
+	<!-- page wrapper start -->
+	<!-- ================ -->
+	<div class="page-wrapper">
+
+		<!-- header start (remove fixed class from header in order to disable fixed navigation mode) -->
+		<!-- ================ -->
+		<header class="header fixed clearfix" th:fragment="header">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-3">
+
+						<!-- header-left start -->
+						<!-- ================ -->
+						<div class="header-left clearfix">
+
+							<!-- logo -->
+							<div class="logo">
+								<a href="/"><img id="logo"
+									src="/images/logo_red.png" alt="iDea"></a>
+							</div>
+
+							<!-- name-and-slogan -->
+							<div class="site-slogan">以便利、优化软件开发过程为目标。</div>
+
+						</div>
+						<!-- header-left end -->
+
+					</div>
+					<div class="col-md-9">
+
+						<!-- header-right start -->
+						<!-- ================ -->
+						<div class="header-right clearfix">
+
+							<!-- main-navigation start -->
+							<!-- ================ -->
+							<div class="main-navigation animated">
+
+								<!-- navbar start -->
+								<!-- ================ -->
+								<nav class="navbar navbar-default" role="navigation">
+									<div class="container-fluid">
+
+										<!-- Toggle get grouped for better mobile display -->
+										<div class="navbar-header">
+											<button type="button" class="navbar-toggle"
+												data-toggle="collapse" data-target="#navbar-collapse-1">
+												<span class="sr-only">Toggle navigation</span> <span
+													class="icon-bar"></span> <span class="icon-bar"></span> <span
+													class="icon-bar"></span>
+											</button>
+										</div>
+
+										<!-- Collect the nav links, forms, and other content for toggling -->
+										<div class="collapse navbar-collapse" id="navbar-collapse-1">
+											<ul class="nav navbar-nav navbar-right">
+												<li id="home"><a href="/">Home</a></li>
+												<!--Github mega-menu start -->
+												<li id="github" class="dropdown mega-menu">
+													<a href="/github" class="dropdown-toggle" data-toggle="dropdown">Github</a>
+													<ul class="dropdown-menu">
+														<li>
+															<div class="row">
+																<div class="col-md-3">
+																	<h4>查找信息</h4>
+																	<div class="divider"></div>
+																	<ul class="menu">
+																		<li><a href="/github/searchUsers"><i class="icon-right-open"></i>查找开发者</a></li>
+																		<li><a href="/github/searchProjects"><i class="icon-right-open"></i>查找开源项目</a></li>
+																	</ul>
+																</div>
+																<div class="col-md-3">
+																	<h4>开发者关系</h4>
+																	<div class="divider"></div>
+																	<ul class="menu">
+																		<li><a href="#"><i class="icon-right-open"></i>社交关系圈</a></li>
+																		<li><a href="#"><i class="icon-right-open"></i>项目协作关系圈</a></li>
+																		<li><a href="#"><i class="icon-right-open"></i>兴趣分析圈</a></li>
+																	</ul>
+																</div>
+																<div class="col-lg-3">
+																	<h4>智能推荐</h4>
+																	<div class="divider"></div>
+																	<ul class="menu">
+																		<li><a href="#"><i class="icon-right-open"></i>推荐Reviewer</a></li>
+																		<li><a href="#"><i class="icon-right-open"></i>推荐团队</a></li>
+																		<li><a href="#"><i class="icon-right-open"></i>推荐开发资源</a></li>
+																	</ul>
+																</div>
+																<div class="col-lg-3">
+																	<h4>开发工具</h4>
+																	<div class="divider"></div>
+																	<ul class="menu">
+																		<li><a href="#"><i class="icon-right-open"></i>Eclipse插件下载</a></li>
+																		<li><a href="#"><i class="icon-right-open"></i>其它工具下载</a></li>
+																		<li><a href="#"><i class="icon-right-open"></i>API的使用</a></li>
+																	</ul>
+																</div>
+															</div>
+														</li>
+													</ul>
+												</li>
+												<!--Github mega-menu end -->
+												<!--Stackoverflow mega-menu start -->
+												<li id="stackoverflow" class="dropdown mega-menu">
+													<a href="/stackoverflow" class="dropdown-toggle" data-toggle="dropdown">Stackoverflow</a>
+													<ul class="dropdown-menu">
+														<li>
+															<div class="row">
+																<div class="col-md-3">
+																	<h4>搜索</h4>
+																	<div class="divider"></div>
+																	<ul class="menu">
+																		<li><a href="/stackoverflow/searchUsers"><i class="icon-right-open"></i>查找用户</a></li>
+																		<li><a href="/stackoverflow/searchProblems"><i class="icon-right-open"></i>查找Question</a></li>
+																		<li><a href="/topcoder/ability"><i class="icon-right-open"></i>开发者能力排行</a></li>
+																	</ul>
+																</div>
+																<div class="col-md-3">
+																	<h4>开发者关系</h4>
+																	<div class="divider"></div>
+																	<ul class="menu">
+																		<li><a href="#"><i class="icon-right-open"></i>社交关系圈</a></li>
+																		<li><a href="#"><i class="icon-right-open"></i>问答关系圈</a></li>
+																		<li><a href="#"><i class="icon-right-open"></i>兴趣分析圈</a></li>
+																	</ul>
+																</div>
+																<div class="col-lg-3">
+																	<h4>智能推荐</h4>
+																	<div class="divider"></div>
+																	<ul class="menu">
+																		<li><a href="#"><i class="icon-right-open"></i>推荐回答者</a></li>
+																	</ul>
+																</div>
+																<div class="col-lg-3">
+																	<h4>开发工具</h4>
+																	<div class="divider"></div>
+																	<ul class="menu">
+																		<li><a href="#"><i class="icon-right-open"></i>Eclipse插件下载</a></li>
+																		<li><a href="#"><i class="icon-right-open"></i>其它工具下载</a></li>
+																		<li><a href="#"><i class="icon-right-open"></i>API的使用</a></li>
+																	</ul>
+																</div>
+															</div>
+														</li>
+													</ul>
+												</li>
+												<!--Stackoverflow mega-menu end -->
+												<!--Topcoder mega-menu start -->
+												<li id="topcoder" class="dropdown mega-menu">
+													<a href="/topcoder" class="dropdown-toggle" data-toggle="dropdown">Topcoder</a>
+													<ul class="dropdown-menu">
+														<li>
+															<div class="row">
+																<div class="col-md-3">
+																	<h4>查找信息</h4>
+																	<div class="divider"></div>
+																	<ul class="menu">
+																		<li><a href="/topcoder/searchUsers"><i class="icon-right-open"></i>查找开发者</a></li>
+																		<li><a href="/topcoder/searchChallenges"><i class="icon-right-open"></i>查找竞赛</a></li>
+																		<li><a href="/topcoder/ability"><i class="icon-right-open"></i>开发者能力排行</a></li>
+																	</ul>
+																</div>
+																<div class="col-md-3">
+																	<h4>开发者关系</h4>
+																	<div class="divider"></div>
+																	<ul class="menu">
+																		<li><a href="#"><i class="icon-right-open"></i>社交关系圈</a></li>
+																		<li><a href="#"><i class="icon-right-open"></i>竞争合作关系</a></li>
+																		<li><a href="#"><i class="icon-right-open"></i>兴趣分析圈</a></li>
+																	</ul>
+																</div>
+																<div class="col-lg-3">
+																	<h4>智能推荐</h4>
+																	<div class="divider"></div>
+																	<ul class="menu">
+																		<li><a href="/topcoder/recDeveloper"><i class="icon-right-open"></i>推荐开发者</a></li>
+																		<li><a href="#"><i class="icon-right-open"></i>推荐团队</a></li>
+																		<li><a href="#"><i class="icon-right-open"></i>推荐竞赛</a></li>
+																	</ul>
+																</div>
+																<div class="col-lg-3">
+																	<h4>开发工具</h4>
+																	<div class="divider"></div>
+																	<ul class="menu">
+																		<li><a href="#"><i class="icon-right-open"></i>Eclipse插件下载</a></li>
+																		<li><a href="#"><i class="icon-right-open"></i>其它工具下载</a></li>
+																		<li><a href="#"><i class="icon-right-open"></i>API的使用</a></li>
+																	</ul>
+																</div>
+															</div>
+														</li>
+													</ul>
+												</li>
+												<!--Topcoder mega-menu end -->
+												<!--CSDN mega-menu start -->
+												<li id="csdn" class="dropdown mega-menu">
+													<a href="/csdn" class="dropdown-toggle" data-toggle="dropdown">CSDN</a>
+													<ul class="dropdown-menu">
+														<li>
+															<div class="row">
+																<div class="col-md-3">
+																	<h4>查找信息</h4>
+																	<div class="divider"></div>
+																	<ul class="menu">
+																		<li><a href="/csdn/searchUsers"><i class="icon-right-open"></i>查找开发者</a></li>
+																		<li><a href="/csdn/searchProjects"><i class="icon-right-open"></i>查找开源项目</a></li>
+																		<li><a href="#"><i class="icon-right-open"></i>问题解答</a></li>
+																		<li><a href="#"><i class="icon-right-open"></i>中文博客</a></li>
+																	</ul>
+																</div>
+																<div class="col-md-3">
+																	<h4>用户关系分析</h4>
+																	<div class="divider"></div>
+																	<ul class="menu">
+																		<li><a href="#"><i class="icon-right-open"></i>社交关系圈</a></li>
+																		<li><a href="#"><i class="icon-right-open"></i>协作关系</a></li>
+																		<li><a href="#"><i class="icon-right-open"></i>兴趣分析圈</a></li>
+																	</ul>
+																</div>
+																<div class="col-lg-3">
+																	<h4>智能推荐</h4>
+																	<div class="divider"></div>
+																	<ul class="menu">
+																		<li><a href="#"><i class="icon-right-open"></i>推荐团队</a></li>
+																		<li><a href="#"><i class="icon-right-open"></i>推荐问题回答者</a></li>
+																		<li><a href="#"><i class="icon-right-open"></i>推荐博客教程</a></li>
+																	</ul>
+																</div>
+																<div class="col-lg-3">
+																	<h4>开发工具</h4>
+																	<div class="divider"></div>
+																	<ul class="menu">
+																		<li><a href="#"><i class="icon-right-open"></i>Eclipse插件下载</a></li>
+																		<li><a href="#"><i class="icon-right-open"></i>其它工具下载</a></li>
+																		<li><a href="#"><i class="icon-right-open"></i>API的使用</a></li>
+																	</ul>
+																</div>
+															</div>
+														</li>
+													</ul>
+												</li>
+												<!--CSDN mega-menu end -->
+											</ul>
+										</div>
+
+									</div>
+								</nav>
+								<!-- navbar end -->
+
+							</div>
+							<!-- main-navigation end -->
+
+						</div>
+						<!-- header-right end -->
+
+					</div>
+				</div>
+			</div>
+		</header>
+		<!-- header end -->
+
+		<div layout:fragment="content" style="min-height:750px"></div>
+		
+		<!-- footer start (Add "light" class to #footer in order to enable light footer) -->
+		<!-- ================ -->
+		<footer id="footer" th:fragment="footer">
+			<!-- .subfooter start -->
+			<!-- ================ -->
+			<div class="subfooter">
+				<div class="container">
+					<p>
+						<a href="#" target="_blank" title="开发者知识库">开发者知识库</a> 课题组 &copy;
+						2017.北京航空航天大学计算机学院
+					</p>
+				</div>
+			</div>
+			<!-- .subfooter end -->
+
+		</footer>
+		<!-- footer end -->
+
+	</div>
+	<!-- page-wrapper end -->
+
+	<!-- JavaScript files placed at the end of the document so the pages load faster
+		================================================== -->
+	<!-- Modernizr javascript -->
+	<script type="text/javascript" src="/plugins/modernizr.js"></script>
+
+	<!-- jQuery REVOLUTION Slider  -->
+	<script type="text/javascript"
+		src="/plugins/rs-plugin/js/jquery.themepunch.tools.min.js"></script>
+	<script type="text/javascript"
+		src="/plugins/rs-plugin/js/jquery.themepunch.revolution.min.js"></script>
+
+	<!-- Isotope javascript -->
+	<script type="text/javascript"
+		src="/plugins/isotope/isotope.pkgd.min.js"></script>
+
+	<!-- Owl carousel javascript -->
+	<script type="text/javascript"
+		src="/plugins/owl-carousel/owl.carousel.js"></script>
+
+	<!-- Magnific Popup javascript -->
+	<script type="text/javascript"
+		src="/plugins/magnific-popup/jquery.magnific-popup.min.js"></script>
+
+	<!-- Appear javascript -->
+	<script type="text/javascript" src="/plugins/jquery.appear.js"></script>
+
+	<!-- Count To javascript -->
+	<script type="text/javascript" src="/plugins/jquery.countTo.js"></script>
+
+	<!-- Parallax javascript -->
+	<script src="/plugins/jquery.parallax-1.1.3.js"></script>
+
+	<!-- Contact form -->
+	<script src="/plugins/jquery.validate.js"></script>
+
+	<!-- Initialization of Plugins -->
+	<script type="text/javascript" src="/js/template.js"></script>
+
+	<!-- Custom Scripts -->
+	<script type="text/javascript" src="/js/custom.js"></script>
+
+	<!-- JavaScript -->
+	<div layout:fragment="function"></div>
+</body>
+</html>

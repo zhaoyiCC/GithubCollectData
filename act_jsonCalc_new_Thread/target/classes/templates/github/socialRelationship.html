@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      data-layout-decorate="~{header-footer}">
+<head>
+    <meta charset="UTF-8">
+    <script src="/js/dataTool.js"></script>
+</head>
+<body>
+    <div layout:fragment="content" class="social-relationship container">
+        <h1>社交关系图</h1>
+        <div id="graph" style="height:1000px;width:1170px">此位置放图</div>
+        <script type="text/javascript">
+            var mychart = echarts.init(document.getElementById("graph"));
+            mychart.showLoading();
+            $.get('/data/github/followColored.gexf', function (xml) {
+                var json = echarts.dataTool.gexf.parse(xml);
+                json.nodes.forEach(function (node) {
+                    node.value = node.symbolSize;
+                    node.symbolSize /= 1;
+                    node.label = {
+                        normal: {
+                            show: false,
+                            textStyle: {
+                                color: node.itemStyle.normal.color
+                            }
+                        }
+                    };
+                });
+                var option = {
+                    title: {
+                        text: 'GitHub社交关系圈'
+                    },
+                    tooltip: {},
+                    series: [
+                        {
+                            type: 'graph',
+                            layout: 'none',
+                            data: json.nodes,
+                            links: json.links,
+                            label: {
+                                emphasis: {
+                                    position: 'right',
+                                    show: true
+                                }
+                            },
+                            roam: true,
+                            focusNodeAdjacency: true,
+                            lineStyle: {
+                                normal: {
+                                    color: 'source',
+                                    width: 0.1,
+                                    curveness: 0.3,
+                                    opacity: 0.7
+                                }
+                            },
+                        }
+
+                    ],
+                    backgroundColor: "rgb(208, 208, 208)",
+                    animation:false,
+                };
+                mychart.setOption(option, true);
+                mychart.hideLoading();
+            }, 'xml')
+        </script>
+    </div>
+</body>
+</html>

@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	data-layout-decorate="~{header-footer}">
+
+<head>
+	<meta charset="utf-8">
+	<script src="/js/dist/echarts.js"></script>
+</head>
+
+<body class="page-body">
+
+	<div layout:fragment="content" class="container">
+
+		<h1 class="page-title" style="padding-left: 40px">Topcoder 数据概况  <small>【数据更新至2016年10月20日】</small></h1>
+		
+		<div class="row">
+			<div class="col-sm-12" style="padding: 20px 30px">
+				<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+				<div id="map1" style="height: 600px"></div>
+				<script type="text/javascript">
+					// 路径配置
+					require.config({
+						paths : {
+							echarts : '/js/dist'
+						}
+					});
+
+					// 使用
+					require(
+							[ 'echarts', 'echarts/chart/map' ],
+							function(ec) {
+								// 基于准备好的dom，初始化echarts图表
+								var myChart = ec.init(document
+										.getElementById('map1'));
+
+								myChart.showLoading({
+									text : "图表数据正在努力加载..."
+								});
+
+								var option = {
+									backgroundColor: '#d0d0d0',
+									title : {
+										text : 'Topcoder用户所在国家分布',
+										subtext : '根据用户所填国家的统计（共36812位）',
+										x : 'center',
+										y : 20,
+										textStyle : {
+											fontFamily : 'sans-serif-thin',
+											fontSize : 28
+										},
+										subtextStyle : {
+											color : '#1d1d1d'
+										}
+									},
+									tooltip : {
+										trigger : 'item',
+										formatter : function(params) {
+											var value = (params.value + '').split('.');
+											value = value[0].replace(/(\d{1,3})(?=(?:\d{3})+(?!\d))/g, '$1,');
+											return params.name + '<br/>' + value;
+										}
+									},
+									toolbox : {
+										show : true,
+										orient : 'vertical',
+										x : 1050,
+										y : 'center',
+										feature : {
+											saveAsImage : {
+												show : true
+											}
+										}
+									},
+									dataRange : {
+										min : 0,
+										max : 11200,
+										text : [ 'High', 'Low' ],
+										realtime : false,
+										calculable : true,
+										color : [ 'orangered', 'yellow', 'lightskyblue' ],
+										x : 20,
+										y : 250,
+									},
+									series : [ {
+										name : '开发者所在国家分布',
+										type : 'map',
+										mapType : 'world',
+										roam : true,
+										mapLocation : {
+											y : 60
+										},
+										itemStyle : {
+											emphasis : {
+												label : {
+													show : true
+												}
+											}
+										}
+									} ]
+								};
+
+								 
+					  			$.ajax({ 
+				                    type : "get", 
+				                    async : false, //同步执行 
+				                    url : "/data/topcoder/NumberofCountry.json", 
+				                    data : {}, 
+				                    dataType : "json", //返回数据形式为json
+				                    success : function(data) { 
+				                        if (data) { 
+				                        	var result = [{name : 'Afghanistan', value :0 }, {name : 'Angola', value :0 }, {name : 'Albania', value :0 }, {name : 'United Arab Emirates', value :0 }, {name : 'Argentina', value :0 }, {name : 'Armenia', value :0 }, {name : 'French Southern and Antarctic Lands', value :0 }, {name : 'Australia', value :0 }, {name : 'Austria', value :0 }, {name : 'Azerbaijan', value :0 }, {name : 'Burundi', value :0 }, {name : 'Belgium', value :0 }, {name : 'Benin', value :0 }, {name : 'Burkina Faso', value :0 }, {name : 'Bangladesh', value :0 }, {name : 'Bulgaria', value :0 }, {name : 'The Bahamas', value :0 }, {name : 'Bosnia and Herzegovina', value :0 }, {name : 'Belarus', value :0 }, {name : 'Belize', value :0 }, {name : 'Bermuda', value :0 }, {name : 'Bolivia', value :0 }, {name : 'Brazil', value :0 }, {name : 'Brunei', value :0 }, {name : 'Bhutan', value :0 }, {name : 'Botswana', value :0 }, {name : 'Central African Republic', value :0 }, {name : 'Canada', value :0 }, {name : 'Switzerland', value :0 }, {name : 'Chile', value :0 }, {name : 'China', value :0 }, {name : 'Ivory Coast', value :0 }, {name : 'Cameroon', value :0 }, {name : 'Democratic Republic of the Congo', value :0 }, {name : 'Republic of the Congo', value :0 }, {name : 'Colombia', value :0 }, {name : 'Costa Rica', value :0 }, {name : 'Cuba', value :0 }, {name : 'Northern Cyprus', value :0 }, {name : 'Cyprus', value :0 }, {name : 'Czech Republic', value :0 }, {name : 'Germany', value :0 }, {name : 'Djibouti', value :0 }, {name : 'Denmark', value :0 }, {name : 'Dominican Republic', value :0 }, {name : 'Algeria', value :0 }, {name : 'Ecuador', value :0 }, {name : 'Egypt', value :0 }, {name : 'Eritrea', value :0 }, {name : 'Spain', value :0 }, {name : 'Estonia', value :0 }, {name : 'Ethiopia', value :0 }, {name : 'Finland', value :0 }, {name : 'Fiji', value :0 }, {name : 'Falkland Islands', value :0 }, {name : 'France', value :0 }, {name : 'Gabon', value :0 }, {name : 'United Kingdom', value :0 }, {name : 'Georgia', value :0 }, {name : 'Ghana', value :0 }, {name : 'Guinea', value :0 }, {name : 'Gambia', value :0 }, {name : 'Guinea Bissau', value :0 }, {name : 'Equatorial Guinea', value :0 }, {name : 'Greece', value :0 }, {name : 'Greenland', value :0 }, {name : 'Guatemala', value :0 }, {name : 'French Guiana', value :0 }, {name : 'Guyana', value :0 }, {name : 'Honduras', value :0 }, {name : 'Croatia', value :0 }, {name : 'Haiti', value :0 }, {name : 'Hungary', value :0 }, {name : 'Indonesia', value :0 }, {name : 'India', value :0 }, {name : 'Ireland', value :0 }, {name : 'Iran', value :0 }, {name : 'Iraq', value :0 }, {name : 'Iceland', value :0 }, {name : 'Israel', value :0 }, {name : 'Italy', value :0 }, {name : 'Jamaica', value :0 }, {name : 'Jordan', value :0 }, {name : 'Japan', value :0 }, {name : 'Kazakhstan', value :0 }, {name : 'Kenya', value :0 }, {name : 'Kyrgyzstan', value :0 }, {name : 'Cambodia', value :0 }, {name : 'South Korea', value :0 }, {name : 'Kosovo', value :0 }, {name : 'Kuwait', value :0 }, {name : 'Laos', value :0 }, {name : 'Lebanon', value :0 }, {name : 'Liberia', value :0 }, {name : 'Libya', value :0 }, {name : 'Sri Lanka', value :0 }, {name : 'Lesotho', value :0 }, {name : 'Lithuania', value :0 }, {name : 'Luxembourg', value :0 }, {name : 'Latvia', value :0 }, {name : 'Morocco', value :0 }, {name : 'Moldova', value :0 }, {name : 'Madagascar', value :0 }, {name : 'Mexico', value :0 }, {name : 'Macedonia', value :0 }, {name : 'Mali', value :0 }, {name : 'Myanmar', value :0 }, {name : 'Montenegro', value :0 }, {name : 'Mongolia', value :0 }, {name : 'Mozambique', value :0 }, {name : 'Mauritania', value :0 }, {name : 'Malawi', value :0 }, {name : 'Malaysia', value :0 }, {name : 'Namibia', value :0 }, {name : 'New Caledonia', value :0 }, {name : 'Niger', value :0 }, {name : 'Nigeria', value :0 }, {name : 'Nicaragua', value :0 }, {name : 'Netherlands', value :0 }, {name : 'Norway', value :0 }, {name : 'Nepal', value :0 }, {name : 'New Zealand', value :0 }, {name : 'Oman', value :0 }, {name : 'Pakistan', value :0 }, {name : 'Panama', value :0 }, {name : 'Peru', value :0 }, {name : 'Philippines', value :0 }, {name : 'Papua New Guinea', value :0 }, {name : 'Poland', value :0 }, {name : 'Puerto Rico', value :0 }, {name : 'North Korea', value :0 }, {name : 'Portugal', value :0 }, {name : 'Paraguay', value :0 }, {name : 'Qatar', value :0 }, {name : 'Romania', value :0 }, {name : 'Russia', value :0 }, {name : 'Rwanda', value :0 }, {name : 'Western Sahara', value :0 }, {name : 'Saudi Arabia', value :0 }, {name : 'Sudan', value :0 }, {name : 'South Sudan', value :0 }, {name : 'Senegal', value :0 }, {name : 'Solomon Islands', value :0 }, {name : 'Sierra Leone', value :0 }, {name : 'El Salvador', value :0 }, {name : 'Somaliland', value :0 }, {name : 'Somalia', value :0 }, {name : 'Republic of Serbia', value :0 }, {name : 'Suriname', value :0 }, {name : 'Slovakia', value :0 }, {name : 'Slovenia', value :0 }, {name : 'Sweden', value :0 }, {name : 'Swaziland', value :0 }, {name : 'Syria', value :0 }, {name : 'Chad', value :0 }, {name : 'Togo', value :0 }, {name : 'Thailand', value :0 }, {name : 'Tajikistan', value :0 }, {name : 'Turkmenistan', value :0 }, {name : 'East Timor', value :0 }, {name : 'Trinidad and Tobago', value :0 }, {name : 'Tunisia', value :0 }, {name : 'Turkey', value :0 }, {name : 'United Republic of Tanzania', value :0 }, {name : 'Uganda', value :0 }, {name : 'Ukraine', value :0 }, {name : 'Uruguay', value :0 }, {name : 'United States of America', value :0 }, {name : 'Uzbekistan', value :0 }, {name : 'Venezuela', value :0 }, {name : 'Vietnam', value :0 }, {name : 'Vanuatu', value :0 }, {name : 'West Bank', value :0 }, {name : 'Yemen', value :0 }, {name : 'South Africa', value :0 }, {name : 'Zambia', value :0 }, {name : 'Zimbabwe', value :0 } ]; 
+			                        		
+				                        	for(var item in result)
+				                        	{	
+				                        		//alert(result[item]);
+				                        		c = result[item].name;
+				                        		//alert(c+"有"+data[c]);
+				                        		if(data[c])
+				                        		result[item].value = data[c];
+				                        	}					
+				                        	option.series[0].data = result;
+				                        } 
+				                    }, 
+				                    error : function(errorMsg) { 
+				                        alert("不好意思，大爷，图表请求数据失败啦!");
+				                    } 
+				                });  
+								// 为echarts对象加载数据 
+								myChart.setOption(option);
+								myChart.hideLoading();
+							});
+				</script>
+
+			</div>
+		</div>
+		
+		<div class="row">
+			<div class="col-sm-6">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<div id="users" style="height: 400px; width: 100%; padding-top:20px"></div>
+						<script type="text/javascript">
+							var chart = echarts.init(document
+									.getElementById('users'));
+							//alert("开始加载");
+							chart.showLoading({
+								text : "图表数据正在努力加载..."
+							});
+
+							// 指定图表的配置项和数据
+							var option = {
+								backgroundColor: '#d0d0d0',
+								title : {
+									text : 'Topcoder用户数量',
+									x : 'center',
+									padding : [ -15, 0 ],
+									textStyle : {
+										fontSize : 28
+									}
+								},
+								tooltip : {
+									trigger : 'axis'
+								},
+								calculable : true,
+								xAxis : [ {
+									type : 'category',
+									axisLabel: {
+										interval:0,  
+										rotate:40  
+		                            },
+									data : [  '2001','2002','2003','2004','2005','2006','2007','2008','2009', '2010', '2011', '2012', '2013', '2014', '2015', '2016' ]
+								} ],
+								yAxis : [ {
+									name : "用户数（万）",
+									type : 'value',
+									axisLabel : {
+										formatter : function(value, index) {
+											return value / 10000;
+										}
+									}
+								} ],
+								series : [ {
+											name : '用户数',
+											type : 'line',
+											markLine : {
+												itemStyle:{
+													normal:{
+														label:{
+															textStyle : {
+																align : 'center',
+																baseline : 'bottom'
+															}
+														}
+													}
+												},
+												data : [ {
+													type : 'max',
+													name : '最大值'
+												} ]
+											}
+										} ]
+							};
+
+							 $.ajax({ 
+								 type : "get", 
+								 async : false, //同步执行 
+								 url : "/data/topcoder/NumberofUser.json", 
+								 data : {}, 
+								 dataType : "json", //返回数据形式为json
+								 success : function(data) { 
+			                        if (data) { 
+			                        	var result = [];
+			                        	for(var item in data)
+			                        	{				                	
+				                        	result.push( data[item] );	
+			                        	}						
+			                        	option.series[0].data = result;
+			                        } 
+								 }, 
+								 error : function(errorMsg) { 
+								 alert("对不起，问题数量请求数据失败啦!");
+								 } 
+							 });
+							// 使用刚指定的配置项和数据显示图表。
+							chart.setOption(option);
+							chart.hideLoading();
+						</script>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-sm-6">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<div id="challenges" style="height: 400px; width: 100%; padding-top:20px"></div>
+						<script type="text/javascript">
+							var chart1 = echarts.init(document
+									.getElementById('challenges'));
+							//alert("开始加载");
+							chart1.showLoading({
+								text : "图表数据正在努力加载..."
+							});
+
+							// 指定图表的配置项和数据
+							var option1 = {
+								title : {
+									text : 'Topcoder发布的任务数量',
+									x : 'center',
+									padding : [ -15, 0 ],
+									textStyle : {
+										fontSize : 28
+									}
+								},
+								backgroundColor: '#d0d0d0',
+								tooltip : {
+									trigger : 'axis'
+								},
+								calculable : true,
+								xAxis : [ {
+									type : 'category',
+									axisLabel: {
+										interval:0,  
+										rotate:40  
+		                            },
+									data : [ '2006', '2007','2008','2009', '2010', '2011', '2012', '2013', '2014', '2015', '2016' ]
+								} ],
+								yAxis : [ {
+									name : "challenge数（万）",
+									type : 'value',
+									axisLabel : {
+										formatter : function(value, index) {
+											return value / 10000;
+										}
+									}
+								} ],
+								series : [ {
+											name : 'challenges数（万）',
+											type : 'line',
+											markLine : {
+												itemStyle:{
+													normal:{
+														label:{
+															textStyle : {
+																align : 'center',
+																baseline : 'bottom'
+															}
+														}
+													}
+												},
+												data : [ {
+													type : 'max',
+													name : '最大值'
+												} ]
+											}
+										} ]
+							};
+
+							 $.ajax({ 
+								 type : "get", 
+								 async : false, //同步执行 
+								 url : "/data/topcoder/NumberofChallenge.json", 
+								 data : {}, 
+								 dataType : "json", //返回数据形式为json
+								 success : function(data) { 
+			                        if (data) { 
+			                        	var result1 = [];
+			                        	for(var item in data)
+			                        	{		
+			                        		//alert(item);
+				                        	result1.push( data[item] );	
+			                        	}						
+			                        	option1.series[0].data = result1;
+		                        		//alert(result1);
+			                        } 
+								 }, 
+								 error : function(errorMsg) { 
+								 alert("对不起，问题数量请求数据失败啦!");
+								 } 
+							 });
+							// 使用刚指定的配置项和数据显示图表。
+							chart1.setOption(option1);
+							chart1.hideLoading();
+						</script>
+					</div>
+				</div>
+			</div>				
+		</div>
+	</div>
+	<!-- 修改目录 -->
+	<div layout:fragment="function">
+		<script type="text/javascript">
+			$(function() {
+				/* 选择Topcoder标签  */
+				$('#statistics').addClass("active");
+				$('#topcoder').addClass("active");
+			});
+		</script>
+	</div>
+
+</body>
+
+</html>

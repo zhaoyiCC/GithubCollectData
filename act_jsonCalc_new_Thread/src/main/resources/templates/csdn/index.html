@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	data-layout-decorate="~{header-footer}">
+
+<head>
+	<meta charset="utf-8">
+	<script src="/js/dist/echarts.js"></script>
+</head>
+
+<body class="page-body">
+
+	<div layout:fragment="content" class="container">
+	
+		<h1 class="page-title" style="padding-left: 40px">CSDN 数据概况  <small>【数据更新至2017年3月22日】用户总量：733,903</small></h1>
+		
+		<div class="row">
+			<div class="col-md-12" style="padding: 20px 30px">
+				<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+				<div id="map" style="height: 600px"></div>
+				<script type="text/javascript">
+					// 路径配置
+					require.config({
+						paths : {
+							echarts : '/js/dist'
+						}
+					});
+
+					// 使用
+					require(
+							[ 'echarts', 'echarts/chart/map' ],
+							function(ec) {
+								// 基于准备好的dom，初始化echarts图表
+								var myChart = ec.init(document.getElementById('map'));
+
+								myChart.showLoading({
+									text : "图表数据正在努力加载..."
+								});
+
+								var option = {
+									backgroundColor: '#d0d0d0',
+									title : {
+										text : 'CSDN开发者所在城市分布',
+										subtext : '根据用户所填省市的统计（共64,217位用户）',
+										x : 'center',
+										y : 20,
+										textStyle : {
+											fontFamily : 'sans-serif-thin',
+											fontSize : 28
+										},
+										subtextStyle : {
+											color : '#1d1d1d'
+										}
+									},
+									tooltip : {
+										trigger : 'item',
+										formatter : function(params) {
+											var value = (params.value + '').split('.');
+											value = value[0].replace(/(\d{1,3})(?=(?:\d{3})+(?!\d))/g, '$1,');
+											return params.name + '<br/>' + value;
+										}
+									},
+									toolbox : {
+										show : true,
+										orient : 'vertical',
+										x : 1050,
+										y : 'center',
+										feature : {
+											saveAsImage : {
+												show : true
+											}
+										}
+									},
+									dataRange : {
+										min : 0,
+										max : 15000,
+										text : [ '多', '少' ],
+										realtime : false,
+										calculable : true,
+										color : [ 'orangered', 'yellow', 'lightskyblue' ],
+										x : 20,
+										y : 250,
+									},
+									series : [ {
+										name : 'CSDN开发者所在城市分布',
+										type : 'map',
+										mapType : 'china',
+										roam : true,
+										mapLocation : {
+											y : 60
+										},
+										itemStyle : {
+											emphasis : {
+												label : {
+													show : true
+												}
+											}
+										}
+									} ]
+								};
+
+								 
+					  			$.ajax({ 
+				                    type : "get", 
+				                    async : false, //同步执行 
+				                    url : "/data/csdn/UserAmountOfProvince.json", 
+				                    data : {}, 
+				                    dataType : "json", //返回数据形式为json
+				                    success : function(obj) { 
+				                        if (obj) { 
+				                        	option.series[0].data = obj.data;
+				                        } 
+				                    }, 
+				                    error : function(errorMsg) { 
+				                        alert("不好意思，大爷，图表请求数据失败啦!");
+				                    } 
+				                });  
+								// 为echarts对象加载数据 
+								myChart.setOption(option);
+								myChart.hideLoading();
+							});
+				</script>
+
+			</div>
+		</div>
+				
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<div id="blog" style="height: 600px; width: 100%"></div>
+						<script type="text/javascript">
+							var chart1 = echarts.init(document.getElementById('blog'));
+							//alert("开始加载");
+							chart1.showLoading({
+								text : "图表数据正在努力加载..."
+							});
+
+							// 指定图表的配置项和数据
+							var option1 = {
+								backgroundColor: '#d0d0d0',
+								title : {
+									text : 'CSDN博客增长趋势',
+									x : 'center',
+									textStyle : {
+										fontSize : 28
+									}
+								},
+					    		grid: {
+					    			x: '6%',
+					    			y: '15%'
+					    		},
+								tooltip : {
+									trigger : 'axis'
+								},
+								legend : {
+									right : true,
+									data : [ '博客数量', '评论数量' ],
+									x: 20,
+									y: 10
+								},
+								calculable : true,
+								xAxis : [ {
+									type : 'category',
+									data : ['2003', '2004', '2005', '2006', '2007', '2008', '2009', '2010', '2011', '2012', '2013', '2014', '2015', '2017/03/22' ]
+								} ],
+								yAxis : [ {
+									type : 'value',
+									name : '单位/万',
+									axisLabel : {
+										formatter : function(value, index) {
+											return value / 10000;
+										},
+									}
+								} ],
+								series : [
+										{
+											name : '博客数量',
+											type : 'bar',
+											markLine : {
+												itemStyle:{
+													normal:{
+														label:{
+															formatter : '博客\n共 {c} 篇',
+															textStyle : {
+																baseline : 'bottom'
+															}
+														}
+													}
+												},
+												data : [ {
+													type : 'max',
+													name : '最大值'
+												} ]
+											}
+										},
+										{
+											name : '评论数量',
+											type : 'bar',
+											markLine : {
+												itemStyle:{
+													normal:{
+														label:{
+															formatter : '评论\n共 {c} 条',
+															textStyle : {
+																baseline : 'bottom'
+															}
+														}
+													}
+												},
+												data : [  {
+													type : 'max',
+													name : '最大值'
+												} ]
+											}
+										} ]
+							};
+
+							 $.ajax({ 
+								 type : "get", 
+								 async : false, //同步执行 
+								 url : "/data/csdn/NumberofBlog.json", 
+								 data : {}, 
+								 dataType : "json", //返回数据形式为json
+								 success : function(data) { 
+			                        if (data) { 
+			                        	var result0 = [];
+			                        	for(var item in data)
+			                        	{				                	
+				                        	result0.push( data[item] );	
+			                        	}						
+			                        	option1.series[0].data = result0;
+			                        } 
+								 }, 
+								 error : function(errorMsg) { 
+								 alert("对不起，博客数量请求数据失败啦!");
+								 } 
+							 });
+							 $.ajax({ 
+								 type : "get", 
+								 async : false, //同步执行 
+								 url : "/data/csdn/NumberofBlogComment.json", 
+								 data : {}, 
+								 dataType : "json", //返回数据形式为json
+								 success : function(data) { 
+			                        if (data) { 
+			                        	var result1 = [];
+			                        	for(var item in data)
+			                        	{				                	
+				                        	result1.push( data[item] );	
+			                        	}						
+			                        	option1.series[1].data = result1;
+			                        } 
+								 }, 
+								 error : function(errorMsg) { 
+								 alert("对不起，评论数量请求数据失败啦!");
+								 } 
+							 });
+							// 使用刚指定的配置项和数据显示图表。
+							chart1.setOption(option1);
+							chart1.hideLoading();
+						</script>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<div id="bbs" style="height: 600px; width: 100%"></div>
+						<script type="text/javascript">
+						    // 基于准备好的dom，初始化echarts实例
+						    var myChart = echarts.init(document.getElementById('bbs'));
+	
+						    var option = {
+									backgroundColor: '#d0d0d0',
+						            title : {
+						                text: '论坛增长趋势',
+										x : 'center',
+										textStyle : {
+											fontSize : 28
+										}
+						            },
+						    		grid: {
+						    			x: '6%',
+						    			y: '15%'
+						    		},
+						            tooltip : {
+						                trigger: 'axis'
+						            },
+						            legend: {
+						                data:['发帖','回帖'],
+										x: 20,
+										y: 10
+						            },
+						            calculable : true,
+						            xAxis : [
+						                {
+						                    type : 'category',
+						                    data : ['2004','2005','2006','2007','2008','2009','2010','2011','2012','2013','2014','2015','2016','2017/03/22']
+						                }
+						            ],
+						            yAxis : [{
+					                    type : 'value',
+										name : '单位/万',
+										axisLabel : {
+											formatter : function(value, index) {
+												return value / 10000;
+											},
+										}
+					                }],
+						            series : [
+						                {
+						                    name:'发帖',
+						                    type:'bar',
+						                    data:[6360, 14145, 26403, 46144, 75641, 114278, 167087, 246620, 357356, 493870, 632111, 795408, 998384, 1045167],
+						                    markLine : {
+												itemStyle:{
+													normal:{
+														label:{
+															formatter : '发帖：{c}',
+															textStyle : {
+																baseline : 'bottom'
+															}
+														}
+													}
+												},
+						                        data : [
+						                            {type : 'max', name: '最大值'}
+						                        ]
+						                    }
+						                },
+						                {
+						                    name:'回帖',
+						                    type:'bar',
+						                    data:[241, 463, 849, 1913, 3436,5670, 10212, 16867, 24985, 33944, 45700, 56881, 71988, 75807],
+						                    markLine : {
+												itemStyle:{
+													normal:{
+														label:{
+															formatter : '回帖：{c}',
+															textStyle : {
+																baseline : 'bottom'
+															}
+														}
+													}
+												},
+						                        data : [
+						                            {type : 'max', name: '最大值'}
+						                        ]
+						                    }
+						                }
+						            ]
+						        };	
+	
+						    // 使用刚指定的配置项和数据显示图表。
+						    myChart.setOption(option);
+						</script>
+					</div>
+				</div>
+			</div>
+		</div>
+												
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<div id="QA" style="height: 600px; width: 100%"></div>
+						<script type="text/javascript">
+						    // 基于准备好的dom，初始化echarts实例
+						    var myChart = echarts.init(document.getElementById('QA'));
+						
+						    // 指定图表的配置项和数据
+						    option = {
+								backgroundColor: '#d0d0d0',
+						        title : {
+						            text: '问答增长趋势',
+									x : 'center',
+									textStyle : {
+										fontSize : 28
+									}
+						        },
+					    		grid: {
+					    			x: '6%',
+					    			y: '15%'
+					    		},
+						        tooltip : {
+						            trigger: 'axis'
+						        },
+						        legend: {
+						            data:['提问','回答'],
+									x: 20,
+									y: 10
+						        },
+						        calculable : true,
+						        xAxis : [
+						            {
+						                type : 'category',
+						                data : ['2012','2013','2014','2015','2016','2017/03/22']
+						            }
+						        ],
+						        yAxis : [
+						            {
+						                type : 'value',
+										name : '单位/万',
+										axisLabel : {
+											formatter : function(value, index) {
+												return value / 10000;
+											},
+										}
+						            }
+						        ],
+						        series : [
+						            {
+						                name:'提问',
+						                type:'bar',
+						                data:[815,8635,20610,74965,136954,157437],
+						                markLine : {
+											itemStyle:{
+												normal:{
+													label:{
+														formatter : '问题： {c}',
+														textStyle : {
+															baseline : 'bottom'
+														}
+													}
+												}
+											},
+						                    data : [
+						                        {type : 'max', name: '最大值'}
+						                    ]
+						                }
+						            },
+						            {
+						                name:'回答',
+						                type:'bar',
+						                data:[1045,5900,15607,114453,223897,259269],
+						                markLine : {
+											itemStyle:{
+												normal:{
+													label:{
+														formatter : '回答：{c}',
+														textStyle : {
+															baseline : 'bottom'
+														}
+													}
+												}
+											},
+						                    data : [
+						                        {type : 'max', name : '最大值'}
+						                    ]
+						                }
+						            }
+						        ]
+						    };
+						
+						    // 使用刚指定的配置项和数据显示图表。
+						    myChart.setOption(option);
+						</script>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<div id="topic" style="height: 600px; width: 100%"></div>
+						<script type="text/javascript">
+						    // 基于准备好的dom，初始化echarts实例
+						    var myChart = echarts.init(document.getElementById('topic'));
+	
+						    var option = {
+									backgroundColor: '#d0d0d0',
+						            title : {
+						                text: '论坛活跃话题分析',
+										x : 'center',
+										textStyle : {
+											fontSize : 28
+										}
+						            },
+						    		grid: {
+						    			x: '5%',
+						    			y: '15%',
+						    			x2: '3%',
+						    			y2: '12%',
+						    			//borderWidth : 0
+						    		},
+						            tooltip : {
+						                trigger: 'axis'
+						            },
+						            calculable : true,
+						            yAxis : [
+						                {
+						                    type : 'value',
+											name : '发帖数/万',
+											axisLabel : {
+												formatter : function(value, index) {
+													return value / 10000;
+												},
+											},
+						                    boundaryGap : [0, 0.01]
+						                }
+						            ],
+						            xAxis : [
+						                {
+						                    type : 'category',
+						        			axisLabel: {
+						        	            interval: 0,
+						        	            rotate: 40
+						        	        },
+						                    data : ['java','c/c++','c#','硬件/嵌入式','php','android','linux','数据库','html/css','网络通信','windows','javascript','汇编语言','ios','apache','python/perl','云计算','hadoop','ruby']
+						                }
+						            ],
+						            series : [
+						                {
+						                    name: '发帖数',
+						                    type:'bar',
+						                    barWidth: 30,
+											itemStyle: {
+												normal: {	　　　　　　　　　　　　　　
+													color: function(params) {
+														var colorList = [
+														  '#C1232B','#E87C25','#27727B',
+														  '#FE8463','#F3A43B','#60C0DD',
+														  '#F0805A','#26C0C0'
+														];
+														return colorList[params.dataIndex % 7]
+													},
+													label: {
+														position: 'top',
+														show: true,
+														formatter: '{c}',
+														textStyle: {
+															fontSize: 16,
+														}
+													}
+												}
+											},
+						                    data:[103249, 74130, 42257, 27490, 20448, 20445, 17928, 16000, 7831, 6317, 5523, 4729, 4666, 4332, 2581, 2096, 1740, 1320, 408]
+						                }
+						            ]
+						        };	
+	
+						    // 使用刚指定的配置项和数据显示图表。
+						    myChart.setOption(option);
+						</script>
+					</div>
+				</div>
+			</div>
+		</div>
+												
+	</div>
+	<!-- 修改目录 -->
+	<div layout:fragment="function">
+		<script type="text/javascript">
+			$(function() {
+				/* 选择CSDN标签  */
+				$('#statistics').addClass("active");
+				$('#csdn').addClass("active");
+			});
+		</script>
+	</div>
+</body>
+
+</html>

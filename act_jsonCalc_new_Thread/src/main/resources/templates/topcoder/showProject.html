@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	data-layout-decorate="~{header-footer}">
+
+<head>
+<meta charset="utf-8">
+	<script src="/js/dist/echarts.js"></script>
+</head>
+
+<body>
+
+	<div layout:fragment="content" class="show-project container">
+	
+		<div id="Id" hidden th:text="${Id}"></div>
+		<h1 th:text="${challengeName}"></h1>
+		<div class="project-info">
+			<div class="platform">
+				<span th:text="'【'+${challengeType}+'】'" class="pr-20" style="color:#9199a1"></span>
+				<a th:href="'javascript:window.open(\'https://www.topcoder.com/challenge-details/'+${Id}+'/?type='+${typeName}+'\')'"><i class="fa fa-home pr-5"></i>Topcoder</a>
+			</div>
+			<div style="margin-bottom:10px">
+				<span th:if="${technology}" th:each="tech,technology:${technology}">
+					<span class="tips" th:text="${tech}" th:unless="${tech eq ''}">java</span>
+				</span>
+				<span th:if="${language}" th:each="lan,language:${language}">
+					<span class="tips" style="background-color: #00A1CB;" th:text="${lan}" th:unless="${lan eq ''}">java</span>
+				</span>
+			</div>
+			<div class="row">
+				<div class="col-md-5">
+					<div class="row">
+						<span class="label-key pr-10 col-md-5" th:text="'Reliability Bounus'"></span><span th:text="${reliabilityBonus}" class="co-md-7"></span>
+					</div>
+					<div class="row">
+						<span class="label-key pr-10 col-md-5" th:text="'Registrants'"></span><span th:text="${numRegistrants}" class="co-md-7"></span>
+					</div>					
+					<div class="row">
+						<span class="label-key pr-10 col-md-5" th:text="'Submissions'"></span><span th:text="${numSubmissions}" class="co-md-7"></span>	
+					</div>					
+				</div>
+				<div class="col-md-5">
+					<div class="row" th:if="${postingDate}">
+					<span class="label-key pr-10 col-md-5" th:text="'posting at'"></span><span th:text="${postingDate}" class="co-md-7"></span>
+					</div>
+					<div class="row" th:if="${registrationEndDate}">
+					<span class="label-key pr-10 col-md-5" th:text="'reegister before'"></span><span th:text="${registrationEndDate}" class="co-md-7"></span>
+					</div>
+					<div class="row" th:if="${submissionEndDate}">
+					<span class="label-key pr-10 col-md-5" th:text="'submit before'"></span><span th:text="${submissionEndDate}" class="co-md-7"></span>
+					</div>
+					<div class="row" th:if="${appealsEndDate}">
+					<span class="label-key pr-10 col-md-5" th:text="'appeal before'"></span><span th:text="${appealsEndDate}" class="co-md-7"></span>
+					</div>
+					<div class="row" th:if="${finalFixEndDate}">
+					<span class="label-key pr-10 col-md-5" th:text="'fix before'"></span><span th:text="${finalFixEndDate}" class="co-md-7"></span>	
+					</div>
+				</div>
+				<div class="col-md-2">
+					<h2 style="margin-top:0;font-weight:600;color:#61AE24" th:text="${currentStatus}"></h2>
+				</div>
+			</div>
+		</div>
+		<div  th:unless="${requirement eq ''}" class="title">Requirement</div>
+		<div class="requirement space" th:utext="${requirement}"></div>
+		
+		<div class="title">协作关系</div>
+		<div class="space-top"></div>
+		<div id="graph-details"></div>
+		<div id="graph" style="height:600px;width:1140px">此位置显示关系图谱</div>
+		<div class="space-bottom"></div>
+	</div>
+	<!-- 修改目录 -->
+	<div layout:fragment="function">
+		<script type="text/javascript">
+			var Id = $("#Id")[0].innerText;
+			
+	        // 路径配置
+            require.config({
+                paths: {
+                    echarts: '/js/dist'
+                }
+            });
+            
+            // 使用
+            require(
+                [
+                    'echarts',
+                    'echarts/chart/force' 
+                ],
+                function (ec) {
+                    // 基于准备好的dom，初始化echarts图表
+                    var myGraph = ec.init(document.getElementById('graph')); 
+	                myGraph.showLoading({ text : "Loading..." });
+                    					                    
+    				var option = optionGraph;
+
+    	 			$.ajax({ 
+    	               type : "get", 
+    	               async : true, //异步执行
+    	               url : "/api/topcoder/subGraph", 
+    	               data : {
+    	            	   "Id" : Id,
+    	            	   "type" : 1,
+    	            	   "limit" : 100
+   	            	   }, 
+    	               dataType : "json", //返回数据形式为json
+    	               success : function(data) { 
+    	                   if (data) { 
+    	                	   var cat = [{name: 'Developer',itemStyle:style[0][1]}], nodes = [], links = [];    		                   	
+    		                   	for(var item in data.nodes){
+    		                   		var temp = {category: 0, name: '', value: 10};
+    		                   		var node = data.nodes[item];
+    		                   		temp.category = node.category;
+    		                   		temp.name = node.name;
+    		                   		temp.value = parseInt(Math.random()*10);
+    		                   		nodes.push(temp);
+    		                   	}
+    		                   	console.log(nodes);
+    		                   	for(var item in data.links){
+    		                   		var temp = {source : 0, target : 1, weight : 1, name : "cooperate 1 time", history: [{name:"titl1",url:"#"}], itemStyle: style[1][0]};
+    		                   		var link = data.links[item];
+    		                   		temp.target = link.target;
+    		                   		temp.source = link.source;
+    		                   		temp.weight = parseInt(Math.random()*100);
+    		                   		temp.name = link.name;
+    		                   		temp.history = link.history;
+    		                   		temp.itemStyle = style[1][link.type];
+    		                   		links.push(temp);
+    		                   	}
+    		                   	console.log(links);
+    		                   	option.tooltip.formatter = '{b}';
+    		                   	option.series[0].minRadius = 10;
+    		                   	option.series[0].maxRadius = 11;
+    		                   	if(nodes.length>50) option.series[0].itemStyle.normal.label.show = false;
+    		                   	option.series[0].itemStyle.normal.linkStyle.width = 1;
+    		                   	//option.series[0].linkSymbol = 'none';
+    		                   	option.legend.data = [];
+    		                   	option.series[0].categories = cat;
+    		                   	option.series[0].nodes = nodes;
+    		                   	option.series[0].links = links;
+    		                   	
+    			                myGraph.setOption(option); 
+    			                myGraph.hideLoading();
+    	                   }
+    	               }, 
+    	               error : function(errorMsg) { 
+    						$("#graph-details").empty().append("<h2>对不起，数据请求失败！</h2>");
+    	               } 
+    	            });   
+    				
+    				var ecConfig = require('echarts/config');
+    				function focus(param) {
+    				    var data = param.data;
+    				    var links = option.series[0].links;
+    				    var nodes = option.series[0].nodes;
+    				    if (
+    				        data.source != null
+    				        && data.target != null
+    				    ) { //点击的是边
+    				        var sourceNode = nodes[data.source];
+    				        var targetNode = nodes[data.target];
+    				        console.log("选中了边 " + sourceNode.name + ' -> ' + targetNode.name + ' (' + data.weight + ')');
+    				    } else { // 点击的是点
+    				        console.log("选中了" + data.name + '(' + data.value + ')');
+    				    }
+    				}
+    				myGraph.on(ecConfig.EVENT.CLICK, focus)
+    				
+    				myGraph.on(ecConfig.EVENT.FORCE_LAYOUT_END, function () {
+    				});                  
+            
+                }
+            );
+		</script>
+	</div>
+
+</body>
+
+</html>

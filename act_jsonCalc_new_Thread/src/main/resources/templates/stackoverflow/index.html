@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	data-layout-decorate="~{header-footer}">
+
+<head>
+<meta charset="utf-8">
+</head>
+
+<body class="page-body">
+
+	<div layout:fragment="content" class="container">
+	
+		<h1 class="page-title" style="padding-left: 30px">Stack Overflow 数据概况  <small>【数据更新至2016年9月8日】</small></h1>
+		
+		<div class="row">
+			<div class="col-sm-6">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<div id="users" style="height: 400px; width: 100%; padding-top:20px"></div>
+						<script type="text/javascript">
+							var chart = echarts.init(document
+									.getElementById('users'));
+							//alert("开始加载");
+							chart.showLoading({
+								text : "图表数据正在努力加载..."
+							});
+
+							// 指定图表的配置项和数据
+							var option = {
+								backgroundColor: '#d0d0d0',
+								title : {
+									text : 'Stack Overflow平台用户数量',
+									x : 'center',
+									padding : [ -15, 0 ],
+									textStyle : {
+										fontSize : 28
+									}
+								},
+								tooltip : {
+									trigger : 'axis'
+								},
+								calculable : true,
+								xAxis : [ {
+									type : 'category',
+									data : [ '2008', '2009', '2010', '2011', '2012', '2013', '2014', '2015', '2016' ]
+								} ],
+								yAxis : [ {
+									name : "用户数量（百万）",
+									type : 'value',
+									axisLabel : {
+										formatter : function(value, index) {
+											return value / 1000000;
+										}
+									}
+								} ],
+								series : [
+										{
+											name : '用户数量',
+											type : 'line',
+											markLine : {
+												itemStyle:{
+													normal:{
+														label:{
+															textStyle : {
+																align: 'center',
+																baseline : 'bottom'
+															}
+														}
+													}
+												},
+												data : [ {
+													type : 'max',
+													name : '最大值'
+												} ]
+											}
+										} ]
+							};
+
+							 $.ajax({ 
+								 type : "get", 
+								 async : false, //同步执行 
+								 url : "/data/stackoverflow/NumberofUser.json", 
+								 data : {}, 
+								 dataType : "json", //返回数据形式为json
+								 success : function(data) { 
+			                        if (data) { 
+			                        	var result = [];
+			                        	for(var item in data)
+			                        	{				                	
+				                        	result.push( data[item] );	
+			                        	}						
+			                        	option.series[0].data = result;
+			                        } 
+								 }, 
+								 error : function(errorMsg) { 
+								 alert("对不起，问题数量请求数据失败啦!");
+								 } 
+							 });
+							// 使用刚指定的配置项和数据显示图表。
+							chart.setOption(option);
+							chart.hideLoading();
+						</script>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-sm-6">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<div id="activity" style="height: 400px; width: 100%; padding-top:20px"></div>
+						<script type="text/javascript">
+							var chart1 = echarts.init(document
+									.getElementById('activity'));
+							//alert("开始加载");
+							chart1.showLoading({
+								text : "图表数据正在努力加载..."
+							});
+
+							// 指定图表的配置项和数据
+							var option1 = {
+									backgroundColor: '#d0d0d0',
+									title : {
+										text : 'Stack Overflow开发者活跃时间分布',
+										x : 'center',
+										padding : [ -15, 0 ],
+										textStyle : {
+											fontSize : 28
+										}
+									},
+									tooltip : {
+										trigger : 'axis'
+									},
+									calculable : true,
+									xAxis : [ {
+										axisLabel: {
+								            interval: 0,
+								            rotate: 30
+								        },
+										type : 'category',
+										data : [ "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday" ]
+									} ],
+									yAxis : [ {
+										name : "answer数（万）",
+										type : 'value',
+										axisLabel : {
+											formatter : function(value, index) {
+												return value / 10000;
+											}
+										}
+									} ],
+									series : [
+											{
+												name : 'answer数',
+												type : 'line',												
+											} ]
+							};
+
+							 $.ajax({ 
+								 type : "get", 
+								 async : false, //同步执行 
+								 url : "/data/stackoverflow/NumberofWeek.json", 
+								 data : {}, 
+								 dataType : "json", //返回数据形式为json
+								 success : function(data) { 
+			                        if (data) { 
+			                        	var result = [];
+			                        	for(var item in data)
+			                        	{				                	
+				                        	result.push( data[item] );	
+			                        	}						
+			                        	option1.series[0].data = result;
+			                        } 
+								 }, 
+								 error : function(errorMsg) { 
+								 alert("对不起，问题数量请求数据失败啦!");
+								 } 
+							 });
+							// 使用刚指定的配置项和数据显示图表。
+							chart1.setOption(option1);
+							chart1.hideLoading();
+						</script>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<div id="A&Q" style="height: 600px; width: 100%; padding-top:20px"></div>
+						<script type="text/javascript">
+							var chart2 = echarts.init(document
+									.getElementById('A&Q'));
+							//alert("开始加载");
+							chart2.showLoading({
+								text : "图表数据正在努力加载..."
+							});
+
+							// 指定图表的配置项和数据
+							var option2 = {
+								backgroundColor: '#d0d0d0',
+								title : {
+									text : 'Stack Overflow平台问答数量',
+									x : 'center',
+									textStyle : {
+										fontSize : 28
+									}
+								},
+								tooltip : {
+									trigger : 'axis'
+								},
+								legend : {
+									right : true,
+									data : [ '问题数量', '回答数量' ],
+									x: 20
+								},
+								calculable : true,
+								xAxis : [ {
+									type : 'category',
+									data : ['2008', '2009', '2010', '2011', '2012', '2013', '2014', '2015', '2016' ]
+								} ],
+								yAxis : [ {
+									type : 'value',
+									name : '单位/百万',
+									axisLabel : {
+										formatter : function(value, index) {
+											return value / 1000000;
+										}
+									}
+								} ],
+								series : [
+										{
+											name : '问题数量',
+											type : 'bar',
+											markLine : {
+												data : [ {
+													type : 'max',
+													name : '最大值'
+												} ]
+											}
+										},
+										{
+											name : '回答数量',
+											type : 'bar',
+											markLine : {
+												data : [  {
+													type : 'max',
+													name : '最大值'
+												} ]
+											}
+										} ]
+							};
+
+							 $.ajax({ 
+								 type : "get", 
+								 async : false, //同步执行 
+								 url : "/data/stackoverflow/NumberofQuestion.json", 
+								 data : {}, 
+								 dataType : "json", //返回数据形式为json
+								 success : function(data) { 
+			                        if (data) { 
+			                        	var result0 = [];
+			                        	for(var item in data)
+			                        	{				                	
+				                        	result0.push( data[item] );	
+			                        	}						
+			                        	option2.series[0].data = result0;
+			                        } 
+								 }, 
+								 error : function(errorMsg) { 
+								 alert("对不起，问题数量请求数据失败啦!");
+								 } 
+							 });
+							 $.ajax({ 
+								 type : "get", 
+								 async : false, //同步执行 
+								 url : "/data/stackoverflow/NumberofAnswer.json", 
+								 data : {}, 
+								 dataType : "json", //返回数据形式为json
+								 success : function(data) { 
+			                        if (data) { 
+			                        	var result1 = [];
+			                        	for(var item in data)
+			                        	{				                	
+				                        	result1.push( data[item] );	
+			                        	}						
+			                        	option2.series[1].data = result1;
+			                        } 
+								 }, 
+								 error : function(errorMsg) { 
+								 alert("对不起，问题数量请求数据失败啦!");
+								 } 
+							 });
+							// 使用刚指定的配置项和数据显示图表。
+							chart2.setOption(option2);
+							chart2.hideLoading();
+						</script>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="panel panel-default">
+					<div class="panel-body">
+						<div id="comments" style="height: 600px; width: 100%; padding-top:20px"></div>
+						<script type="text/javascript">
+							var chart3 = echarts.init(document
+									.getElementById('comments'));
+							//alert("开始加载");
+							chart3.showLoading({
+								text : "图表数据正在努力加载..."
+							});
+
+							// 指定图表的配置项和数据
+							var option3 = {
+								backgroundColor: '#d0d0d0',
+								title : {
+									text : 'Stack Overflow平台用户评论数量',
+									x : 'center',
+									textStyle : {
+										fontSize : 28
+									}
+								},
+								tooltip : {
+									trigger : 'axis'
+								},
+								calculable : true,
+								xAxis : [ {
+									type : 'category',
+									data : [ '2008', '2009', '2010', '2011', '2012', '2013', '2014', '2015', '2016' ]
+								} ],
+								yAxis : [ {
+									type : 'value',
+									name : '评论数（百万）',
+									axisLabel : {
+										formatter : function(value, index) {
+											return value / 1000000;
+										}
+									}
+								} ],
+								series : [
+										{
+											name : '评论数量',
+											type : 'bar',
+											barWidth : 60,
+								            markLine : {
+								                data : [
+								                    {type : 'max', name : '最大值'}
+								                ]
+								            }
+										} ]
+							};
+
+							 $.ajax({ 
+								 type : "get", 
+								 async : false, //同步执行 
+								 url : "/data/stackoverflow/NumberofComment.json", 
+								 data : {}, 
+								 dataType : "json", //返回数据形式为json
+								 success : function(data) { 
+			                        if (data) { 
+			                        	var result = [];
+			                        	for(var item in data)
+			                        	{				                	
+				                        	result.push( data[item] );	
+			                        	}						
+			                        	option3.series[0].data = result;
+			                        } 
+								 }, 
+								 error : function(errorMsg) { 
+								 alert("对不起，问题数量请求数据失败啦!");
+								 } 
+							 });
+							// 使用刚指定的配置项和数据显示图表。
+							chart3.setOption(option3);
+							chart3.hideLoading();
+						</script>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+	<!-- 修改目录 -->
+	<div layout:fragment="function">
+		<script type="text/javascript">
+			$(function() {
+				/* 选择Stack Overflow标签  */
+				$('#statistics').addClass("active");
+				$('#stackoverflow').addClass("active");
+			});
+		</script>
+	</div>
+	
+</body>
+
+</html>

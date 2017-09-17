@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	data-layout-decorate="~{header-footer}">
+
+<head>
+<meta charset="utf-8">
+	<script src="/js/dist/echarts.js"></script>
+</head>
+
+<body>
+
+	<div layout:fragment="content" class="show-user container">
+		<div  class="row">
+			<div class="col-md-3 user-info">
+				<div class="image-container">
+					<img th:src="@{/images/team-member-2.jpg}" alt="user image" title="user image">
+				</div>
+				<div class="user-name">
+					<span class="name" th:text="${nickname}"></span>
+					<div id="userId" hidden th:text="${userId}"></div>			
+					<span class="about-me" th:text="${sign}"></span>
+				</div>
+				<div class="platform">
+					<a th:href="@{${userurl}}"><i class="fa fa-home pr-5"></i>CSDN</a>
+				</div>
+				<!-- <div><span th:text="'Label: ' + ${label}"></span></div>
+				<div><span th:text="'Field: ' + ${field}"></span></div>
+				<div><span th:text="'Skill: ' + ${skill}"></span></div>
+				<div><span th:text="'education ' + ${education}"></span></div>
+				<div><span th:text="'job ' + ${job}"></span></div>
+				<div>
+					<span th:text="'email ' + ${email}"></span><br/>
+					<span th:text="'mobile ' + ${mobile}"></span><br/>
+					<span th:text="'qq ' + ${qq}"></span><br/>
+					<span th:text="'weixin ' + ${weixin}"></span><br/>
+				</div> -->
+				<div>
+					<span class="label-key pr-10">focusNum</span><span th:text="${focusNum}"></span><br/>
+					<span class="label-key pr-10">befocusNum</span><span th:text="${befocusNum}"></span>
+				</div>
+				<div th:if="${address}">
+					<i class="fa fa-map-marker pr-5"></i>
+					<span th:text="${address}"></span>
+				</div>
+			</div>
+			<div class="col-md-9 content">
+				<!-- tabs start -->
+				<!-- Nav tabs -->
+				<ul class="nav nav-tabs" role="tablist">
+					<li class="active"><a href="#htab1" role="tab" data-toggle="tab">Ability</a></li>
+					<li><a id="numProjects" href="#htab2" role="tab" data-toggle="tab">Activity</a></li>
+					<li><a id="showGraph" href="#htab3" role="tab" data-toggle="tab">Developer Graph</a></li>
+				</ul>
+				<!-- Tab panes -->
+				<div class="tab-content">
+					<div class="tab-pane fade in active" id="htab1">
+						<div class="row">
+							<div class="col-md-6">
+								<div class="title">Contributions</div>
+								<div class="space-bottom"></div>
+								<div id="contributions" style="height: 200px"></div>
+							</div>
+							<div class="col-md-6">
+								<div class="title">Collaborations</div>
+								<div class="space-bottom"></div>
+								<div id="collaborations" style="height: 200px"></div>
+							</div>
+						</div>
+						<div class="space-bottom"></div>
+						<div class="title">Skills</div>	
+						<div class="space-bottom"></div>
+						<div id="skill-details"></div>			
+						<div class="row" id="skill-chart">
+							<div class="col-md-8 skill-cloud">
+								<div id="skill-cloud" style="height: 315px"></div>
+							</div>
+							<div class="col-md-4 skill-radar">								
+								<div id="skill-radar" style="width: 315px ;height: 315px"></div>
+							</div>
+						</div>
+						<h2 id="numSkills">技能列表（7）</h2>
+						<div class="row" style="background-color: #DBDBDB; margin:0">
+							<div class="col-md-4 skill-bar">
+								<div id="skill-bar1" style="height: 200px"></div>
+							</div>
+							<div class="col-md-4 skill-bar">		
+								<div id="skill-bar2" style="height: 200px"></div>
+							</div>
+							<div class="col-md-4 skill-bar">	
+								<div id="skill-bar3" style="height: 200px"></div>	
+							</div>
+						</div>
+						<div class="space-bottom"></div>
+					</div>
+					<div class="tab-pane fade" id="htab2">
+						<div id="activity-details"></div>				
+						<div class="title" id="numBlog">Blog</div>
+						<!-- html模板  start -->
+						<textarea style="display:none;" id="blog-item">
+							<div class="list-project">
+							<div class="row">
+								<div class="part1 col-md-9" style="margin-top:10px">
+									<h2>
+										<span class="tips">$type$</span>
+										<a href="javascript:window.open('$link$')">$title$</a>
+									</h2>	
+									<p>
+										<i class="fa fa-thumbs-o-up pr-10 pl-20"></i>$num_ding$ 
+										<i class="fa fa-thumbs-o-down pr-10 pl-20"></i>$num_cai$
+										<i class="fa fa-comment-o pr-10 pl-20"></i>$num_comment$
+										<i class="fa fa-eye pr-10 pl-20"></i>$num_read$
+									</p>
+								</div>
+								<div class="part2 col-md-3" style="padding-top:5px">
+									<a href="javascript:window.open('/csdn/showProject?Id=$blogID$')" class="btn radius btn-primary btn-sm">协作分析</a>
+								</div>		
+							</div>
+							</div>
+						</textarea>							
+						<!-- html模板 end -->	
+						<div id="blogs"></div>
+						<div class="read-more" id="moreBlog"> > > > > > > > > > > More > > > > > > > > > ></div>						
+						<div class="space-bottom"></div>
+						<div class="title" id="numBBS">BBS</div>
+						<!-- html模板  start -->
+						<textarea style="display:none;" id="bbs-item">
+							<div class="list-project">
+							<div class="row">
+								<div class="part1 col-md-12" style="width:100%">
+									<h2><a href="javascript:window.open('$url$')">$title$</a></h2>	
+									<p>
+										<span class="tips">$flag$</span>
+										<i class="fa fa-folder-open pr-10 pl-20"></i>$time$ 
+									</p>
+								</div>
+							</div>
+							</div>
+						</textarea>							
+						<!-- html模板 end -->	
+						<div id="BBSs"></div>
+						<div class="read-more" id="moreBBS"> > > > > > > > > > > More > > > > > > > > > ></div>	
+						<div class="space-bottom"></div>
+						<div class="title" id="numQ">Q&A</div>
+						<!-- html模板  start -->
+						<textarea style="display:none;" id="question-item">
+							<div class="list-project">
+							<div class="row">
+								<div class="part1 col-md-12" style="width:100%">
+									<h2><a href="#">$title$</a></h2>	
+									<p>
+										<i class="fa fa-folder-open pr-10 pl-20"></i>$time$ 
+										<span class="tip">Answer $num_answer$</span>
+										<i class="fa fa-comment-o pr-10 pl-20"></i>$num_alsoask$ 
+										<i class="fa fa-heart-o pr-10 pl-20"></i>$num_collection$
+										<i class="fa fa-eye pr-10 pl-20"></i>$num_read$
+									</p>
+								</div>
+							</div>
+							</div>
+						</textarea>							
+						<!-- html模板 end -->	
+						<div id="questions"></div>
+						<div class="read-more" id="moreQ"> > > > > > > > > > > More > > > > > > > > > ></div>	
+						<div class="space-bottom"></div>		
+						<div id="projects">	
+						</div>
+					</div>					
+					<div class="tab-pane fade" id="htab3">
+						<div id="graph-details"></div>
+						<div id="graph" style="height:600px;width:915px">此位置显示关系图谱</div>
+					    <script type="text/javascript">
+					    	var f = false;
+					    	$("#showGraph").click(function(){
+					    		if(f) return;
+					            // 路径配置
+					            require.config({
+					                paths: {
+					                    echarts: '/js/dist'
+					                }
+					            });
+					            
+					            // 使用
+					            require(
+					                [
+					                    'echarts',
+					                    'echarts/chart/force' 
+					                ],
+					                function (ec) {
+					                    // 基于准备好的dom，初始化echarts图表
+					                    var myGraph = ec.init(document.getElementById('graph')); 
+						                myGraph.showLoading({ text : "Loading..." });
+					                    					                    
+					    				var option = optionGraph;
+					
+					    	 			$.ajax({ 
+					    	               type : "get", 
+					    	               async : true, //异步执行
+					    	               url : "/api/csdn/subGraphNew", 
+					    	               data : {
+					    	   				"userId" : userId,
+					    	   				"limit" : 10
+					    	   				}, 
+					    	               dataType : "json", //返回数据形式为json
+					    	               success : function(data) { 
+					    	                   if (data) { 
+					    	                	   var cat = [{name: 'user',itemStyle: style[0][0]},{name: 'blog commenter',itemStyle: style[0][1]},
+					    	                		   		  {name: 'blogger',itemStyle: style[0][2]},{name: 'follower',itemStyle: style[0][3]},
+					    	                		   		  {name: 'followee',itemStyle: style[0][4]},{name: 'answerer',itemStyle: style[0][5]},
+					    	                		   		  {name: 'asker',itemStyle: style[0][6]}];
+					    	                	   var nodes = [], links = [];
+					    		                   	
+					    		                   	for(var item in data.nodes){
+					    		                   		var temp = {category: 0, name: '', value: 10};
+					    		                   		var node = data.nodes[item];
+					    		                   		temp.category = node.category;
+					    		                   		temp.name = node.name;
+					    		                   		temp.value = 10/(1+temp.category);
+					    		                   		nodes.push(temp);
+					    		                   	}
+					    		                   	for(var item in data.links){
+					    		                   		var temp = {source : 0, target : 1, weight : 1, name : "", history: [{name:"titl1",url:"#"}], itemStyle: style[1][0]};
+					    		                   		var link = data.links[item];
+					    		                   		temp.target = link.target;
+					    		                   		temp.source = link.source;
+					    		                   		temp.weight = parseInt(Math.random()*100);
+					    		                   		temp.name = link.name;
+					    		                   		temp.history = link.history;
+					    		                   		temp.itemStyle = style[1][link.type-1];
+					    		                   		console.log(temp);
+					    		                   		links.push(temp);
+					    		                   	}
+					    		                   	option.series[0].categories = cat;
+					    		                   	option.legend.data = ['blog commenter','blogger','follower','followee','answerer','asker'];
+					    		                   	option.series[0].nodes = nodes;
+					    		                   	option.series[0].links = links;
+					    		                   	
+					    			                myGraph.setOption(option); 
+					    			                myGraph.hideLoading();
+					    	                   }
+					    	               }, 
+					    	               error : function(errorMsg) { 
+					    						$("#graph-details").empty().append("<h2>对不起，关系图谱请求失败！</h2>");
+					    	               } 
+					    	            });   
+					    				
+					    				var ecConfig = require('echarts/config');
+					    				function focus(param) {
+					    				    var data = param.data;
+					    				    var links = option.series[0].links;
+					    				    var nodes = option.series[0].nodes;
+					    				    if (
+					    				        data.source != null
+					    				        && data.target != null
+					    				    ) { //点击的是边
+					    				        var sourceNode = nodes[data.source];
+					    				        var targetNode = nodes[data.target];
+					    				        console.log("选中了边 " + sourceNode.name + ' -> ' + targetNode.name + ' (' + data.weight + ')');
+					    				    } else { // 点击的是点
+					    				        console.log("选中了" + data.name + '(' + data.value + ')');
+					    				    }
+					    				}
+					    				myGraph.on(ecConfig.EVENT.CLICK, focus)
+					    				
+					    				myGraph.on(ecConfig.EVENT.FORCE_LAYOUT_END, function () {
+					    				});                  
+					            
+					                }
+					            );
+					            f = true;
+							});
+					    </script>
+						<div class="space-bottom"></div>		
+					</div>					
+				</div>
+				<!-- tabs end -->
+			</div>
+		</div>
+	</div>
+	<!-- 修改目录 -->
+	<div layout:fragment="function">
+		<script type="text/javascript">
+			var userId = $("#userId")[0].innerText;
+			var pageId = [1,1,1];
+
+			function searchActivity(type){
+				var urlMap = ["/api/csdn/getBlogsBaseUser","/api/csdn/getBBSQuestionBaseUser","/api/csdn/getQAQuestionBaseUser"];
+				$.ajax({
+					type : "get",
+					async : false,
+					url : urlMap[type],
+					data : {
+						"userId" : userId,
+						"pageId" : pageId[type],
+						"pageSize" : 15
+					},
+					dataType : "json",
+					success : function(data) {
+						if (data) {
+							var numPages = data.numPages;
+							pageId[type]++;
+
+							switch(type){
+							case 0:
+								if(pageId[type]>numPages) $("#moreBlog").hide();
+								var htmlList = $("#blogs")[0].innerHTML, htmlTemp = $("#blog-item")[0].value;
+								var result = data.blogs;		
+								result.forEach(function(object) {	
+									var str = object.title;
+									str = str.replace(/</g,'&lt;');
+									str = str.replace(/>/g,'&gt;');
+									object.title = str;
+									
+								    htmlList += htmlTemp.temp(object);
+								});
+								$("#numBlog")[0].innerHTML = 'Blog ('+data.nNumBlogs+')';
+								$("#blogs")[0].innerHTML = htmlList; 
+								break;
+							case 1:
+								if(pageId[type]>numPages) $("#moreBBS").hide();
+								var htmlList = $("#BBSs")[0].innerHTML, htmlTemp = $("#bbs-item")[0].value;
+								var result = data.bbsquestions;		
+								result.forEach(function(object) {	
+									var str = object.title;
+									str = str.replace(/</g,'&lt;');
+									str = str.replace(/>/g,'&gt;');
+									object.title = str;
+									
+								    htmlList += htmlTemp.temp(object);
+								});
+								$("#numBBS")[0].innerHTML = 'BBS（'+data.nNumBlogs+'）';
+								$("#BBSs")[0].innerHTML = htmlList; 
+								break;
+							case 2:
+								if(pageId[type]>numPages) $("#moreQ").hide();
+								var htmlList = $("#questions")[0].innerHTML, htmlTemp = $("#question-item")[0].value;
+								var result = data.qaquestions;		
+								result.forEach(function(object) {	
+								    htmlList += htmlTemp.temp(object);
+								});
+								$("#numQ")[0].innerHTML = 'Q&A（'+data.nNumBlogs+'）';
+								$("#questions")[0].innerHTML = htmlList; 
+							}							
+						} else {
+							$("#activity-details").empty().append("<h2>您查找的用户不存在，请重新查找</h2>");
+						}
+					},
+					error : function(errorMsg) {
+						$("#activity-details").empty().append("<h2>对不起，服务器请求失败！</h2>");
+					}
+				});
+			};
+			searchActivity(0);
+			searchActivity(1);
+			searchActivity(2);
+
+			$("#moreBlog").click(function(){
+				searchActivity(0);
+			});			
+			$("#moreBBS").click(function(){
+				searchActivity(1);
+			});			
+			$("#moreQ").click(function(){
+				searchActivity(3);
+			});			
+		
+		
+	        // 路径配置
+	        require.config({
+	            paths: {
+	                echarts: '/js/dist'
+	            }
+	        });	        
+	        // 使用
+	        require(
+	            [
+	                'echarts',
+	                'echarts/chart/bar',
+	                'echarts/chart/wordCloud',
+	                'echarts/chart/radar' 
+	            ],
+	            function (ec) {
+	                // 基于准备好的dom，初始化echarts图表
+	                var conChart = ec.init(document.getElementById('contributions')); 
+	                conChart.showLoading({ text : "Loading..." });
+			        var colChart = echarts.init(document.getElementById('collaborations'));
+			        colChart.showLoading({ text : "Loading..." }); 
+	                var myCloud = ec.init(document.getElementById('skill-cloud')); 
+	                myCloud.showLoading({ text : "Loading..." });
+
+                	var conOption0 = conOption, colOption0 = colOption, optionC0 = optionC, optionR0 = optionR, optionB0 = optionB;
+	                var b0=0, bar0=[{'name':[],'value':[]}, {'name':[],'value':[]}, {'name':[],'value':[]}];
+	                var n=0, max=10;
+	                
+		 			$.ajax({ 
+		               type : "get", 
+		               async : false, //同步执行 
+		               url : "/api/getESUser", 
+		               data : {
+		   				"userId" : userId,
+		   				"platform" : 3
+		   				}, 
+		               dataType : "json", //返回数据形式为json
+		               success : function(data) { 
+		                   if (data) { 
+		                   	var con = []; 
+		                   	con.push(data.contributions['BlogNum']);
+		                   	con.push(data.contributions['QaAskNum']);
+		                   	con.push(data.contributions['ForumAskNum']);
+		                   	conOption0.yAxis.data = ['博客','问答','论坛'];
+		                   	conOption0.series[0].data = con;
+		                    
+		                   	var col = []; 
+		                   	col.push(data.collaborations['QaAnswerNum']);
+		                   	col.push(data.collaborations['QaCommentNum']);
+		                   	col.push(data.collaborations['ForumFollowNum']);
+		                   	col.push(data.collaborations['BlogCommentNum']);
+		                   	//colOption0.xAxis.axisLabel.rotate = -10;
+		                   	colOption0.xAxis.data = ['\nQuestion-Answer','Comment-Question','\nFollow','Comment-Blog'];
+		                   	colOption0.series[0].data = col;
+		                	
+		                   	var skills = [];
+		                   	for(var item in data.skills.tag){
+			                   	data.skills.tag[item].forEach(function(obj) {
+			                   		skills.push(obj);
+								});
+		                   	}
+                   			//console.log(skills);
+		                   	
+		                	var result = [];	
+		                	var topN = [], nValue = [];
+		                	
+	                   		skills.forEach(function(skill){
+		                   		var w = { name: "None",value: 10,itemStyle: { normal:{ color:'black' } } };
+	                   			if(skill.length==0){
+			                   		result.push(w);
+	                   			} else{
+		                   			var res = lineFeed(skill,15);
+		                   			var nameR = res.result, count = res.count, v = 5;
+		                   			w.name = nameR;
+		                       		var v = 5;
+		                       		w.value = v*4;
+			                   		w.itemStyle = createRandomItemStyle();  
+		                   			result.push(w);
+		                   			
+			                		bar0[b0%3].name.unshift(nameR);
+			                		bar0[b0%3].value.unshift(v);
+			                		b0++;
+			                		
+		                   			if(n<6){
+		                   				var tr = { text: '', max:10 };
+		                   				tr.text = nameR;
+		                   				for(var j=0;j<count;j++) tr.text += '\n';
+		                   				tr.max = max;
+		                   				nValue.push(v);
+		                   				n = topN.push(tr);
+		                   			}	                   				
+	                   			} 
+	                   		}); 
+		                   	
+		                   	optionC0.title.text = '技能云（'+(b0).toString()+'）';
+		                   	optionC0.series[0].data = result;
+		        			optionR0.title.text = '技能雷达（'+n.toString()+'）';
+		        			optionR0.polar[0].indicator = topN;
+		                	optionR0.series[0].data[0].value = nValue;
+		                   } 
+		               }, 
+		               error : function(errorMsg) { 
+							$("#skill-details").empty().append("<h2>对不起，系统未获取到该用户数据！</h2>");
+							$("#numSkills").hide();
+		               } 
+		           });   
+	                $('#numSkills').text('技能列表（'+(b0).toString()+'）');
+	                if(parseInt((b0+2)/3)>0)
+	                	$('#skill-bar1').height(parseInt((b0+2)/3)*50);
+	                else $('#skill-bar1').hide();
+	                if(parseInt((b0+1)/3)>0)
+	               		$('#skill-bar2').height(parseInt((b0+1)/3)*50);
+	                else $('#skill-bar2').hide();
+	                if(parseInt((b0)/3)>0)
+	               		$('#skill-bar3').height(parseInt(b0/3)*50);
+	                else $('#skill-bar3').hide();
+	        
+	                // 为echarts对象加载数据 
+	                conChart.setOption(conOption0);
+	                conChart.hideLoading();
+			        colChart.setOption(colOption0);
+			        colChart.hideLoading();
+			        optionC0.tooltip.formatter = '{b}';
+					myCloud.setOption(optionC0);
+					myCloud.hideLoading();
+			        if(n==0) $("#skill-chart").hide();
+	                if(n>2){
+		                var myRadar = ec.init(document.getElementById('skill-radar')); 
+				        optionR0.tooltip.show = false;
+		                myRadar.setOption(optionR0); 	                	
+	                }
+	                var optionB0 = optionB;
+	                optionB0.xAxis.max = max;
+			        optionB0.series[0].itemStyle.normal.label.show = false;
+	   		        var myBar1 = echarts.init(document.getElementById('skill-bar1'));  
+	   		        optionB0.yAxis.data = bar0[0]['name'];
+	   		        optionB0.series[0].data = bar0[0]['value'];
+	   		    	myBar1.setOption(optionB0);
+	   		        var myBar2 = echarts.init(document.getElementById('skill-bar2'));  
+	   		        optionB0.yAxis.data = bar0[1]['name'];
+	   		        optionB0.series[0].data = bar0[1]['value'];
+	   		     	myBar2.setOption(optionB0);
+	   		        var myBar3 = echarts.init(document.getElementById('skill-bar3'));  
+	   		        optionB0.yAxis.data = bar0[2]['name'];
+	   		        optionB0.series[0].data = bar0[2]['value'];
+	   		    	myBar3.setOption(optionB0);
+	            }
+	        );
+		</script>
+	</div>
+
+</body>
+
+</html>

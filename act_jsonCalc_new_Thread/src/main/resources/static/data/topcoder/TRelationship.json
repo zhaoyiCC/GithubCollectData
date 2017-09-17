@@ -1,0 +1,41 @@
+{	
+	"categories" : [
+		{
+			"name": "Developer"
+		},
+		{
+			"name": "Competitor",
+			"symbol": "diamond"  
+		},
+		{
+			"name":"Co-worker"
+		}
+	], 
+	"nodes":[
+		{"category":0, "name": "u1", "value" : 10}, 
+		{"category":1, "name": "u2","value" : 2},
+		{"category":1, "name": "u3","value" : 3},
+		{"category":1, "name": "u4","value" : 3},
+		{"category":1, "name": "u5","value" : 7},
+		{"category":1, "name": "u6","value" : 5},
+		{"category":2, "name": "u7","value" : 8},
+		{"category":2, "name": "u8","value" : 9},
+		{"category":2, "name": "u9","value" : 4},
+		{"category":2, "name": "u10","value" : 4},
+		{"category":2, "name": "u11","value" : 1}
+	],
+	"links" : [
+		{"source" : 0, "target" : 1, "weight" : 1, "name": "cooperate 1 time", "history": [{"name":"titl1","url":"#"}], "type": 0},
+		{"source" : 0, "target" : 2, "weight" : 2, "name": "cooperate 2 times", "history": [{"name":"titl6","url":"#"},{"name":"titl6","url":"#"}], "type": 0},
+		{"source" : 0, "target" : 3, "weight" : 5, "name": "cooperate 5 times", "history": [{"name":"titl7","url":"#"},{"name":"titl7","url":"#"},{"name":"titl7","url":"#"},{"name":"titl7","url":"#"},{"name":"titl7","url":"#"},{"name":"titl7","url":"#"}], "type": 0},
+		{"source" : 0, "target" : 2, "weight" : 13, "name": "8:5", "history": [{"name":"title2","url":"#"},{"name":"title1","url":"#"},{"name":"title9","url":"#"},{"name":"title10","url":"#"},{"name":"title6","url":"#"},{"name":"title7","url":"#"},{"name":"title11","url":"#"},{"name":"title1","url":"#"},{"name":"title9","url":"#"},{"name":"title10","url":"#"},{"name":"title6","url":"#"},{"name":"title7","url":"#"},{"name":"title11","url":"#"}], "type": 1},
+		{"source" : 0, "target" : 10, "weight" : 7, "name": "1:6", "history": [{"name":"title2","url":"#"},{"name":"title1","url":"#"},{"name":"title9","url":"#"},{"name":"title10","url":"#"},{"name":"title6","url":"#"},{"name":"title7","url":"#"},{"name":"title11","url":"#"}], "type": 2},
+		{"source" : 0, "target" : 5, "weight" : 1, "name": "1:0", "history": [{"name":"title4","url":"#"}], "type": 1},
+		{"source" : 0, "target" : 4, "weight" : 7, "name": "cooperate 1 time", "history": [{"name":"title2","url":"#"},{"name":"title1","url":"#"},{"name":"title9","url":"#"},{"name":"title10","url":"#"},{"name":"title6","url":"#"},{"name":"title7","url":"#"},{"name":"title11","url":"#"}], "type": 0},
+		{"source" : 0, "target" : 5, "weight" : 2, "name": "cooperate 2 times", "history": [{"name":"titl6","url":"#"},{"name":"titl6","url":"#"}], "type": 0},
+		{"source" : 0, "target" : 6, "weight" : 6, "name": "2:4", "history": [{"name":"titl7","url":"#"},{"name":"titl7","url":"#"},{"name":"titl7","url":"#"},{"name":"titl7","url":"#"},{"name":"titl7","url":"#"},{"name":"titl7","url":"#"},{"name":"titl7","url":"#"}], "type": 2},
+		{"source" : 0, "target" : 7, "weight" : 13, "name": "8:5", "history": [{"name":"title2","url":"#"},{"name":"title1","url":"#"},{"name":"title9","url":"#"},{"name":"title10","url":"#"},{"name":"title6","url":"#"},{"name":"title7","url":"#"},{"name":"title11","url":"#"},{"name":"title1","url":"#"},{"name":"title9","url":"#"},{"name":"title10","url":"#"},{"name":"title6","url":"#"},{"name":"title7","url":"#"},{"name":"title11","url":"#"}], "type": 1},
+		{"source" : 0, "target" : 8, "weight" : 7, "name": "1:6", "history": [{"name":"title2","url":"#"},{"name":"title1","url":"#"},{"name":"title9","url":"#"},{"name":"title10","url":"#"},{"name":"title6","url":"#"},{"name":"title7","url":"#"},{"name":"title11","url":"#"}], "type": 2},
+		{"source" : 0, "target" : 9, "weight" : 1, "name": "1:0", "history": [{"name":"title4","url":"#"}], "type": 1}
+	]
+}

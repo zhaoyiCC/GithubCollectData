@@ -1,0 +1,123 @@
+
+.pic
+{
+	position: absolute;
+	left: 0px;
+}
+.touchdown
+{
+	bottom: -37px;
+	position: absolute;
+}
+.beforetouchdown
+{
+	bottom: -10px;
+	position: absolute;
+}
+.jumbotron
+{
+	//background-image: url(../img/bg3.png) ;
+	background-color: grey;
+	background-size: 100%; 
+	background-repeat: no-repeat;
+	background-size: cover;
+}
+.touxiang
+{
+	position: absolute;
+	left: 0px;
+	width: 100px;
+	height: 100px;
+}
+.topborder
+{
+	border-top: solid 1px lightgrey;
+	background-color: white;
+	height: 100px;
+}
+.label-default{
+	background-color: #a3a3ae;
+}
+h2,p
+{
+	color: white;
+}
+a
+{
+	text-decoration: none;	
+	cursor: pointer;
+}
+a:hover
+{
+	text-decoration: none;
+}
+a:visited
+{
+	text-decoration: none;
+}
+textarea
+{
+	border-left:none ;
+	border-right: none;
+	border-top: none;
+	border-color: white;
+	resize: none;
+	outline: none;
+	background: transparent;
+	overflow-wrap:break-word;
+}
+label
+{
+	font-size: 90%;
+	line-height: 255%;
+	color: white;
+}
+span
+{
+	font-family: "微软雅黑";
+}
+span[name='handle']
+{
+	font-size: large;
+	font-weight: bold;
+	font-family: "century gothic";
+	color: #9d9fa0;
+	display: block;
+	width:100%;  
+    word-break:keep-all;/* 不换行 */  
+    white-space:nowrap;/* 不换行 */  
+}
+span[name='country']
+{
+	font-family: arial,helvetica,sans-serif;
+	text-transform: uppercase;
+	color: #000000;
+}
+span[name='memberSince']
+{
+	font-family: "century gothic";
+	color: #a3a3ae;
+}
+span[name='quote']
+{
+	font-size: large;
+	font-style: italic;
+	font-family: "comic sans ms";
+	color: #3A3C3E;
+	display: block;
+	width:100%;  
+    word-break:keep-all;/* 不换行 */  
+    white-space:nowrap;/* 不换行 */  
+    overflow:hidden;/* 内容超出宽度时隐藏超出部分的内容 */  
+    text-overflow:ellipsis;/* 当对象内文本溢出时显示省略标记(...) ；需与overflow:hidden;一起使用。*/  
+}
+span[name='skills']
+{
+	display: block;
+	width:100%;  
+	color: #3A3C3E;
+    word-break:keep-all;/* 不换行 */  
+    white-space:nowrap;/* 不换行 */  
+    overflow:hidden;/* 内容超出宽度时隐藏超出部分的内容 */  
+    text-overflow:ellipsis;/* 当对象内文本溢出时显示省略标记(...) ；需与overflow:hidden;一起使用。*/  
+}

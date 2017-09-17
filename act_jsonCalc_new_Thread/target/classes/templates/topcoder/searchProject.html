@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	data-layout-decorate="~{header-footer}">
+
+<head>
+<meta charset="utf-8">
+</head>
+
+<body>
+
+	<div layout:fragment="content">		
+
+		<!-- main-container start -->
+		<!-- ================ -->
+		<section class="main-container">
+
+			<div class="container" style="back">
+			
+				<div class="tabs-style-1">
+					<ul class="nav nav-tabs" role="tablist" id="tablist">
+						<!-- <li><a th:href="@{'/searchProject?platform=-1&type='+${type}+'&content='+${content}+'&pageId=1'}">ALL</a></li> -->
+						<li><a th:href="@{'/github/searchProject?content='+${content}}"><small>开源项目</small></a></li>
+						<li><a th:href="@{'/stackoverflow/searchProject?content='+${content}}"><small>问答</small></a></li>
+						<li class="active"><a th:href="@{'/topcoder/searchProject?content='+${content}}"><small>众包项目</small></a></li>
+						<li><a th:href="@{'/csdn/searchProject?content='+${content}}"><small>博客</small></a></li>
+					</ul>				
+				</div>
+				
+				<form class="form-inline" role="form" action="/topcoder/searchProject" method="post">		
+					<div class="form-group has-feedback">
+						<input name="content" type="text" class="form-control" placeholder="Search Challenges" style="width:850px" th:value="${content}">
+						<i class="fa fa-search form-control-feedback"></i>
+					</div>
+					<!-- <input name="platform" id="platform" type="hidden" th:value="${platform}"></input> -->
+				</form>	
+								
+				
+				<div id="details" class="space" style="margin-left: 30px; padding-bottom: 0px; margin-bottom: 0px">
+					<h2 th:text="${numProjects} + ' results'"></h2>
+				</div>
+										
+				<div  id="list" th:if="${projects}">		
+					<div class="list-project row" th:each="project,projects:${projects}">
+						<div class="col-md-10">
+							<h2>
+								<span th:text="'【'+${project.challengeType}+'】'" class="pr-20"></span> 
+								<a th:href="'javascript:window.open(\'https://www.topcoder.com/challenge-details/'+${project.challengeId}+'/?type='+${project.typeName}+'\')'" th:text="${project.challengeName}"></a>
+							</h2>		
+							<p>
+								 Posting at <span th:text="${project.postingDate}" class="pr-20"></span> 
+								 <span class="tips" th:text="${project.currentStatus}"></span> 
+							</p>
+						</div>
+						<div class="col-md-2">
+							<a th:href="'javascript:window.open(\'/topcoder/showProject?Id='+${project.challengeId}+'\')'" class="btn radius btn-primary" style="margin-top:30px">协作分析</a>
+						</div>		
+					</div>			
+				</div>		
+				
+				<div class="clearfix"></div>
+				
+				<input id="pageId" type="hidden" th:if="${pageId}" th:value="${pageId}"></input>
+				<input id="numPages" type="hidden" th:if="${numPages}" th:value="${numPages}"></input>
+
+				<!-- pagination start -->
+				<ul class="pagination" th:if="${numPages >0}">
+					<li th:if="${pageId>1}"><a th:href="@{'/github/searchProject?content='+${content}+'&pageId=1'}">|<</a></li>
+					<li th:if="${pageId>1}"><a th:href="@{'/github/searchProject?content='+${content}+'&pageId='+${pageId-1}}"><<</a></li>
+					<li th:if="${pageId>4}"><a th:text="${pageId-4}" th:href="@{'/github/searchProject?content='+${content}+'&pageId='+${pageId-4}}"></a></li>
+					<li th:if="${pageId>3}"><a th:text="${pageId-3}" th:href="@{'/github/searchProject?content='+${content}+'&pageId='+${pageId-3}}"></a></li>
+					<li th:if="${pageId>2}"><a th:text="${pageId-2}" th:href="@{'/github/searchProject?content='+${content}+'&pageId='+${pageId-2}}"></a></li>
+					<li th:if="${pageId>1}"><a th:text="${pageId-1}" th:href="@{'/github/searchProject?content='+${content}+'&pageId='+${pageId-1}}"></a></li>
+					<li class="active"><a href="#" th:text="${pageId}">0</a></li>
+					<li th:if="${pageId<numPages}"><a th:text="${pageId+1}" th:href="@{'/github/searchProject?content='+${content}+'&pageId='+${pageId+1}}"></a></li>
+					<li th:if="${pageId+1<numPages}"><a th:text="${pageId+2}" th:href="@{'/github/searchProject?content='+${content}+'&pageId='+${pageId+2}}"></a></li>
+					<li th:if="${pageId+2<numPages}"><a th:text="${pageId+3}" th:href="@{'/github/searchProject?content='+${content}+'&pageId='+${pageId+3}}"></a></li>
+					<li th:if="${pageId+3<numPages}"><a th:text="${pageId+4}" th:href="@{'/github/searchProject?content='+${content}+'&pageId='+${pageId+4}}"></a></li>
+					<li th:if="${pageId+2<numPages}"><a th:href="@{'/github/searchProject?content='+${content}+'&pageId='+${pageId+1}}">>></a></li>
+					<li th:if="${pageId<numPages}"><a th:href="@{'/github/searchProject?content='+${content}+'&pageId='+${numPages}}">>|</a></li>
+					<li><span th:text="'共'+${numPages}+'页'"></span></li>
+				</ul>
+				<!-- pagination end -->						
+				
+			</div>
+		</section>
+		<!-- main-container end -->
+
+	</div>
+	<!-- 修改目录 -->
+	<div layout:fragment="function">			
+	<script type="text/javascript">
+	
+	$(function() {
+		/* 选择搜索开发者标签  */
+		$('#search').addClass("active");
+		$('#searchProjects').addClass("active");
+		var pageId = $("#pageId").val();
+		var numPages = $("#numPages").val();
+		/* var platform = $("#platform").val();
+		var i = parseInt(platform)+1;
+		$("#tablist").find("li").eq(i).addClass("active"); */
+	});
+	
+	</script>			
+	</div>
+
+
+</body>
+
+</html>

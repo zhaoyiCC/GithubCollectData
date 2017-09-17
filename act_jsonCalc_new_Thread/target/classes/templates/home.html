@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	data-layout-decorate="~{layout}">
+
+<head>
+<meta charset="utf-8">
+</head>
+
+<body>
+	<!-- 编辑页面内容 -->
+	<div layout:fragment="content">
+	
+		<!-- main-container start -->
+		<!-- ================ -->
+		<section class="main-container">
+
+			<div class="container">
+				<div class="row">
+
+					<!-- main start -->
+					<!-- ================ -->
+					<div class="main col-md-12">
+
+						<!-- page-title start -->
+						<!-- ================ -->
+						<h1 class="page-title">What we do</h1>
+						<div class="separator-2"></div>
+						<!-- page-title end -->
+
+						<div class="row">
+							<div class="col-md-12">
+								<p>简介。</p>
+								<h3>目标</h3>
+								<p>便利、优化软件开发过程</p>
+								<ul class="list-icons">
+									<li class="object-non-visible"
+										data-animation-effect="fadeInUpSmall"><i
+										class="icon-check"></i> 目标</li>
+									<li class="object-non-visible"
+										data-animation-effect="fadeInUpSmall" data-effect-delay="100"><i
+										class="icon-check"></i> 目标</li>
+									<li class="object-non-visible"
+										data-animation-effect="fadeInUpSmall" data-effect-delay="300"><i
+										class="icon-check"></i> 目标</li>
+									<li class="object-non-visible"
+										data-animation-effect="fadeInUpSmall" data-effect-delay="500"><i
+										class="icon-check"></i> 目标</li>
+								</ul>
+							</div>
+						</div>
+						<hr>
+					</div>
+					<!-- main end -->
+
+				</div>
+			</div>
+		</section>
+		<!-- main-container end -->
+
+		<!-- section start -->
+		<!-- ================ -->
+		<div class="section clearfix">
+			<div class="container">
+				<h2 class="title">Contact Us</h2>
+
+				<ul class="list-icons">
+					<li><i class="fa fa-map-marker pr-10"></i> 北京市海淀区学院路街道
+						北京航空航天大学</li>
+					<li><i class="fa fa-phone pr-10"></i> +00 1234567890</li>
+					<li><i class="fa fa-fax pr-10"></i> +00 1234567891</li>
+					<li><i class="fa fa-envelope-o pr-10"></i> info@idea.com</li>
+				</ul>
+			</div>
+		</div>
+		<!-- section end -->
+
+		<!-- section start -->
+		<!-- ================ -->
+		<div class="section clearfix">
+			<div class="container">
+				<h2>Our Team</h2>
+				<div class="separator-2"></div>
+				<p class="lead">由孙海龙老师带领的课题组</p>
+				<div class="row grid-space-20">
+					<div class="col-md-3 col-sm-6">
+						<div class="box-style-1 gray-bg team-member">
+							<div class="overlay-container">
+								<a href="#"><img src="images/team-member-1.jpg" alt=""></a>
+							</div>
+							<h3>孙海龙</h3>
+							副教授
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- section end -->
+	
+	</div>
+
+	<!-- 修改目录 -->
+	<div layout:fragment="function">
+		<script type="text/javascript">
+			$(function() {
+				/* 选择主页  */
+				$('#home').addClass("active");
+			});
+		</script>
+	</div>
+
+</body>
+
+</html>

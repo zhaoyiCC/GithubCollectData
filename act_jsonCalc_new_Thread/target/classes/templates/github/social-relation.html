@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	data-layout-decorate="~{layout}">
+
+<head>
+<meta charset="utf-8">
+	<script type="text/javascript">
+		$(function() {
+			$('#github').attr("checked","checked");
+			document.getElementById("g-link").style.display="";
+			$('#circle').addClass("opened");
+			$('#circle').addClass("active");
+			$('#social-relation').addClass("active");
+		});
+	</script>	
+</head>
+
+<body class="page-body">
+
+	<div layout:fragment="content">
+
+		<div class="page-title">
+			<div class="title-env">
+				<h1 class="title">开发者社交圈</h1>
+			</div>
+
+			<div class="breadcrumb-env">
+				<ol class="breadcrumb bc-1">
+					<li><a href="/"><i class="fa-home"></i>Home</a></li>
+					<li style="display : none" id="g-link"><a href="/github">GitHub</a></li>
+					<li style="display : none" id="s-link"><a href="/stackoverflow">Stackoverflow</a></li>
+					<li style="display : none" id="t-link"><a href="/topcoder-data">Topcoder</a></li>
+					<li style="display : none" id="c-link"><a href="/csdn">CSDN</a></li>
+					<li class="active"><strong>开发者社交圈</strong></li>
+				</ol>
+			</div>
+		</div>
+
+		<div class="row">
+			<div class="col-sm-12">
+
+				<br />
+
+				<div class="input-group" style="width: 900px; margin: 0 auto">
+					<input id="userId" type="text" class="form-control" style="height: 37px" placeholder="请输入开发者ID" /> 
+					<span class="input-group-btn">
+						<button id="searchUser" class="btn btn-blue btn-icon btn-icon-standalone btn-icon-standalone-right">
+							<i class="fa-search"></i> 
+							<span>&nbsp&nbsp搜 索&nbsp</span>
+						</button>
+					</span>
+				</div>
+				<div id="details"></div>
+				<div  id="relations" style="height:400px"></div>
+				<script type="text/javascript">
+					$(function(){
+						$("#searchUser").click(function(){
+							var name = document.getElementById("userId").value;
+							
+							$.ajax({
+								type : "get",
+								async : false,
+								url : "/github/SearchUser",
+								data : {"name" : name},
+								dataType : "json",
+								success : function(data){
+									if(data){
+										var result = data.users;
+										for(var item in result)
+											alert(result[item].login);
+										$("#details").empty().append("success!");
+									}else
+									{
+										$("#details").empty().append("<h2>您查找的用户\""+name+"\"不存在，请重新查找</h2>");
+									}
+								},
+								error : function(errorMsg){
+									$("#details").empty().append("<h2>对不起，服务器请求失败！</h2>");
+								}
+							});
+						});
+					});
+				</script>
+			</div>
+		</div>
+	</div>
+	<!-- 编辑表格 -->
+</body>
+
+</html>

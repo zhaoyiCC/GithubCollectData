@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	data-layout-decorate="~{header-footer}">
+
+<head>
+<meta charset="utf-8">
+</head>
+
+<body>
+
+	<div layout:fragment="content">
+	
+		<!--  search begin -->
+		<section class="main-container">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-6 col-md-offset-3">
+						<form th:action="@{/recCode}" method="get" style="margin-bottom: 0">
+							<div class="form-group has-feedback" style="margin-bottom: 5px">								
+								<input type="text" name="query" class="form-control" placeholder="Recommend Code ..." th:value="${query}"></input>									
+								<i class="fa fa-search form-control-feedback"></i>								
+							</div>
+						</form>
+					</div>
+				</div>
+				
+				<div id="details" class="space" style="margin-left: 40%; margin-top: 0" th:if="${numCodes}">
+					<h2 style="margin-bottom: 0; margin-top: 0" th:text="${numCodes} + ' results'"></h2>
+				</div>
+				<div class="codepost" th:if="${content}" th:each="code:${content}">
+					<h2 class="title">
+						<div class="post-info">
+							<span class="num" th:text="${code.num}"></span>
+							<span class="code-score" th:text="${code.score}"></span>
+						</div>
+						<a th:href="'javascript:window.open(\''+${code.url}+'\')'" th:utext="${code.title}"></a>
+					</h2>
+					<textarea style="height: 600px; width:100%" class="codepost-content" th:text="${code.code}">
+					</textarea>
+				</div>	
+				
+				<div class="clearfix"></div>
+	
+				<!-- pagination start -->
+				<ul class="pagination" th:if="${numPages > 0}">
+					<li th:if="${pageId>1}"><a th:href="@{'/recCode?query='+${query}+'&pageId=1'}">|<</a></li>
+					<li th:if="${pageId>1}"><a th:href="@{'/recCode?query='+${query}+'&pageId='+${pageId-1}}"><<</a></li>
+					<li th:if="${pageId>4}"><a th:text="${pageId-4}" th:href="@{'/recCode?query='+${query}+'&pageId='+${pageId-4}}"></a></li>
+					<li th:if="${pageId>3}"><a th:text="${pageId-3}" th:href="@{'/recCode?query='+${query}+'&pageId='+${pageId-3}}"></a></li>
+					<li th:if="${pageId>2}"><a th:text="${pageId-2}" th:href="@{'/recCode?query='+${query}+'&pageId='+${pageId-2}}"></a></li>
+					<li th:if="${pageId>1}"><a th:text="${pageId-1}" th:href="@{'/recCode?query='+${query}+'&pageId='+${pageId-1}}"></a></li>
+					<li class="active"><a href="#" th:text="${pageId}">0</a></li>
+					<li th:if="${pageId<numPages}"><a th:text="${pageId+1}" th:href="@{'/recCode?query='+${query}+'&pageId='+${pageId+1}}"></a></li>
+					<li th:if="${pageId+1<numPages}"><a th:text="${pageId+2}" th:href="@{'/recCode?query='+${query}+'&pageId='+${pageId+2}}"></a></li>
+					<li th:if="${pageId+2<numPages}"><a th:text="${pageId+3}" th:href="@{'/recCode?query='+${query}+'&pageId='+${pageId+3}}"></a></li>
+					<li th:if="${pageId+3<numPages}"><a th:text="${pageId+4}" th:href="@{'/recCode?query='+${query}+'&pageId='+${pageId+4}}"></a></li>
+					<li th:if="${pageId+2<numPages}"><a th:href="@{'/recCode?query='+${query}+'&pageId='+${pageId+1}}">>></a></li>
+					<li th:if="${pageId<numPages}"><a th:href="@{'/recCode?query='+${query}+'&pageId='+${numPages}}">>|</a></li>
+					<li><span th:text="'共'+${numPages}+'页'"></span></li>
+				</ul>
+				<!-- pagination end -->					
+			</div>
+		</section>		
+		
+	</div>
+	<!-- 修改目录 -->
+	<div layout:fragment="function">
+		<script type="text/javascript">
+			$('#recommend').addClass("active");
+			$('#recCode').addClass("active");
+		</script>
+	</div>
+
+</body>
+
+</html>

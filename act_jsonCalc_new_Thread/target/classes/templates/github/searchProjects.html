@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	data-layout-decorate="~{layout}">
+
+<head>
+<meta charset="utf-8">
+</head>
+
+<body>
+
+	<div layout:fragment="content">
+
+		<!-- page-intro start-->
+		<!-- ================ -->
+		<div class="page-intro">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-12">
+						<ol class="breadcrumb">
+							<li><i class="fa fa-github pr-10"></i><a href="/github">Github</a></li>
+							<li class="active">查找开源项目</li>
+						</ol>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- page-intro end -->
+
+		<!-- main-container start -->
+		<!-- ================ -->
+		<section class="main-container">
+
+			<div class="container">
+			<div class="row">
+				<!-- main start -->
+				<!-- ================ -->
+				<div class="main col-md-12">
+					<div class="input-group" style="width: 900px; margin: 0 auto">
+						<input id="repository" type="text" class="form-control" style="height: 42px;margin-right: 0px;right: 5px;top: 10px;"  placeholder="请输入项目名称..." /> 
+						<span class="input-group-btn">
+							<button onclick="searchProject(0)" class="btn btn-default">搜索</button>
+						</span>
+					</div>
+					
+					<div id="details" style="text-align:center">
+						<img name="loading" id="loading" src="/images/loader.gif" style="display:none; width: 200px; margin-left: 40%;"></img>	
+					</div>
+					<!-- html模板  start -->
+					<textarea style="display:none;">
+						<div class="list-project">
+							<h2><a href="javascript:window.open('$html_url$')">$name$<small>[github]</small></a></h2>
+							<h4 style="float:right; margin-top: 0">创建时间：$created_at$</h4>
+							<p class="small">$descriptor$ </p>
+						</div>
+					</textarea>							
+					<!-- html模板 end -->	
+					
+					<div  id="list" style="margin-top:20px"></div>
+					
+					<div class="clearfix"></div>
+
+					<!-- pagination start -->
+					<ul class="pagination">
+						<li id="prePage"><a href="javascript:searchProject(-1);"><<</a></li>
+						<li class="active"><a id="currentPage" href="#">0<span class="sr-only">(current)</span></a></li>
+						<li id="nextPage"><a href="javascript:searchProject(1);">>></a></li>
+					</ul>
+					<!-- pagination end -->						
+				</div>
+				<!-- main end -->
+			</div>
+			</div>
+		</section>
+		<!-- main-container end -->
+
+	</div>
+	<!-- 修改目录 -->
+	<div layout:fragment="function">			
+	<script type="text/javascript">
+	
+	$(function() {
+		/* 选择Github标签  */
+		$('#github').addClass("active");
+	});
+	
+	var name = '', pageId = 0, hasMore = new Boolean(0), total = 0;
+	
+	function searchProject(type){
+		if (type === 0) {
+			name = $("#repository")[0].value;
+			pageId = 1;
+		}
+		else if (type === -1){
+			if (pageId < 2) return;
+			pageId -= 1;
+		}else if(type === 1){
+			if (hasMore == 0) return;
+			pageId += 1;
+		}
+
+		$("#loading")[0].style.display = "block";
+		
+		$.ajax({
+			type : "get",
+			async : false,
+			url : "/api/github/SearchProject1",
+			data : {
+				"name" : name,
+				"pageId" : pageId,
+				"pageSize" : 10
+			},
+			dataType : "json",
+			success : function(data) {
+				if (data) {
+					var result = data.projects;
+					hasMore = data.hasMore;
+					/* total = data.total_count;
+					$("#details").empty().append("共 <a>" + total + "</a> 个结果查询"); */
+
+					var htmlList = '', htmlTemp = $("textarea")[0].value;				
+					result.forEach(function(object) {
+						object.html_url = "https://github.com" + object.url.substring(28);
+					    htmlList += htmlTemp.temp(object);
+					});
+
+					/* htmlList就是我们需要的HTML代码啦！ */
+					$("#list")[0].innerHTML = htmlList; 
+					/* 处理页码显示  */
+					$("#currentPage")[0].innerText = pageId;
+					if(pageId === 1){
+						$("#prePage").addClass("disabled");
+					}else {
+						$("#prePage").removeClass("disabled");
+					}
+					if(hasMore == 0){
+						$("#nextPage").addClass("disabled");
+					}else{
+						$("#nextPage").removeClass("disabled");
+					}
+				} else {
+					$("#details").empty().append("<h2>您查找的用户\"" + name + "\"不存在，请重新查找</h2>");
+				}
+			},
+			error : function(errorMsg) {
+				$("#details").empty().append("<h2>对不起，服务器请求失败！</h2>");
+			}
+		});
+		$("#loading")[0].style.display = "none";
+		
+	}
+	
+	</script>			
+	</div>
+
+
+</body>
+
+</html>

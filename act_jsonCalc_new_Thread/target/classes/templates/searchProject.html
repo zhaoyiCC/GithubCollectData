@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	data-layout-decorate="~{header-footer}">
+
+<head>
+<meta charset="utf-8">
+</head>
+
+<body>
+
+	<div layout:fragment="content">		
+
+		<!-- main-container start -->
+		<!-- ================ -->
+		<section class="main-container">
+
+			<div class="container" style="back">
+			
+				<div class="tabs-style-1">
+					<ul class="nav nav-tabs" role="tablist" id="tablist">
+						<li><a th:href="@{'/searchProject?platform=-1&type='+${type}+'&content='+${content}+'&pageId=1'}">ALL</a></li>
+						<li><a th:href="@{'/searchProject?platform=0&type='+${type}+'&content='+${content}+'&pageId=1'}"><small>GitHub</small></a></li>
+						<li><a th:href="@{'/searchProject?platform=1&type='+${type}+'&content='+${content}+'&pageId=1'}"><small>Topcoder</small></a></li>
+						<li><a th:href="@{'/searchProject?platform=2&type='+${type}+'&content='+${content}+'&pageId=1'}"><small>Stack Overflow</small></a></li>
+						<li><a th:href="@{'/searchProject?platform=3&type='+${type}+'&content='+${content}+'&pageId=1'}"><small>CSDN</small></a></li>
+					</ul>				
+				</div>
+				
+				<form class="form-inline" role="form" action="/searchProject" method="post">	
+					<div  style="width:200px" class="form-group has-feedback">
+						<label>Search Project: </label>
+						<input name="content" type="text" class="form-control" placeholder="" style="width:850px" th:value="${content}">
+						<i class="fa fa-search form-control-feedback"></i>
+					</div>
+					<input name="platform" id="platform" type="hidden" th:value="${platform}"></input>
+				</form>	
+								
+				
+				<div id="details" class="space" style="margin-left: 30px; padding-bottom: 0px; margin-bottom: 0px">
+					<h2 th:text="${numProjects} + ' results'"></h2>
+				</div>
+											
+				<div  id="list" style="margin-top:20px" th:if="${projects}">		
+					<div class="list-project" th:each="project,projects:${projects}">
+						<div class="part1 col-md-9">
+							<h2><a th:href="'javascript:window.open(\''+${project.url}+'\')'"><span th:text="${project.title}"></span></a></h2>
+							<p>
+								<span th:if="${project.tags}" th:each="tag,tags:${project.tags}">
+									<span class="tips" th:text="${tag}" th:unless="${tag eq '\\N'}">java</span>
+								</span>
+							</p>
+						</div>
+						<div class="part2 col-md-3">
+							<button th:onclick="'javascript:window.open(\''+${project.analyseUrl}+'\')'" class="btn btn-white">项目协作关系</button>
+						</div>
+					</div>			
+				</div>
+				
+				<div class="clearfix"></div>
+				
+				<input id="pageId" type="hidden" th:if="${pageId}" th:value="${pageId}"></input>
+				<input id="numPages" type="hidden" th:if="${numPages}" th:value="${numPages}"></input>
+
+				<!-- pagination start -->
+				<ul class="pagination" th:if="${pageId}">
+					<li th:if="${pageId>1}"><a th:href="@{'/searchProject?type='+${type}+'&content='+${content}+'&pageId=1&platform='+${platform}}">|<</a></li>
+					<li th:if="${pageId>1}"><a th:href="@{'/searchProject?type='+${type}+'&content='+${content}+'&pageId='+${pageId-1}+'&platform='+${platform}}"><<</a></li>
+					<li th:if="${pageId>4}"><a th:text="${pageId-4}" th:href="@{'/searchProject?type='+${type}+'&content='+${content}+'&pageId='+${pageId-4}+'&platform='+${platform}}"></a></li>
+					<li th:if="${pageId>3}"><a th:text="${pageId-3}" th:href="@{'/searchProject?type='+${type}+'&content='+${content}+'&pageId='+${pageId-3}+'&platform='+${platform}}"></a></li>
+					<li th:if="${pageId>2}"><a th:text="${pageId-2}" th:href="@{'/searchProject?type='+${type}+'&content='+${content}+'&pageId='+${pageId-2}+'&platform='+${platform}}"></a></li>
+					<li th:if="${pageId>1}"><a th:text="${pageId-1}" th:href="@{'/searchProject?type='+${type}+'&content='+${content}+'&pageId='+${pageId-1}+'&platform='+${platform}}"></a></li>
+					<li class="active"><a href="#" th:text="${pageId}">0</a></li>
+					<li th:if="${pageId<numPages}"><a th:text="${pageId+1}" th:href="@{'/searchProject?type='+${type}+'&content='+${content}+'&pageId='+${pageId+1}+'&platform='+${platform}}"></a></li>
+					<li th:if="${pageId+1<numPages}"><a th:text="${pageId+2}" th:href="@{'/searchProject?type='+${type}+'&content='+${content}+'&pageId='+${pageId+2}+'&platform='+${platform}}"></a></li>
+					<li th:if="${pageId+2<numPages}"><a th:text="${pageId+3}" th:href="@{'/searchProject?type='+${type}+'&content='+${content}+'&pageId='+${pageId+3}+'&platform='+${platform}}"></a></li>
+					<li th:if="${pageId+3<numPages}"><a th:text="${pageId+4}" th:href="@{'/searchProject?type='+${type}+'&content='+${content}+'&pageId='+${pageId+4}+'&platform='+${platform}}"></a></li>
+					<li th:if="${pageId+2<numPages}"><a th:href="@{'/searchProject?type='+${type}+'&content='+${content}+'&pageId='+${pageId+1}+'&platform='+${platform}}">>></a></li>
+					<li th:if="${pageId<numPages}"><a th:href="@{'/searchProject?type='+${type}+'&content='+${content}+'&pageId='+${numPages}+'&platform='+${platform}}">>|</a></li>
+					<li><span th:text="'共'+${numPages}+'页'"></span></li>
+				</ul>
+				<!-- pagination end -->						
+				
+			</div>
+		</section>
+		<!-- main-container end -->
+
+	</div>
+	<!-- 修改目录 -->
+	<div layout:fragment="function">			
+	<script type="text/javascript">
+	
+	$(function() {
+		/* 选择搜索开发者标签  */
+		$('#search').addClass("active");
+		$('#searchProjects').addClass("active");
+		var pageId = $("#pageId").val();
+		var numPages = $("#numPages").val();
+		var platform = $("#platform").val();
+		var i = parseInt(platform)+1;
+		$("#tablist").find("li").eq(i).addClass("active");
+	});
+	
+	</script>			
+	</div>
+
+
+</body>
+
+</html>

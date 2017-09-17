@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	data-layout-decorate="~{layout}">
+
+<head>
+
+<meta charset="utf-8">
+	
+<script type="text/javascript" src="/js/control.js"></script>	
+<link href="/css/text.css" rel="stylesheet" />
+<link href="/css/spinner.css" rel="stylesheet" />	
+			
+</head>
+
+<body>
+
+	<div layout:fragment="content">
+
+		<!-- page-intro start-->
+		<!-- ================ -->
+		<div class="page-intro">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-12">
+						<ol class="breadcrumb">
+							<li><i class="fa fa-home pr-10"></i><a href="/topcoder">Topcoder</a></li>
+							<li class="active">推荐开发者</li>
+						</ol>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- page-intro end -->
+	
+		<!-- form start -->
+		<!-- ================ -->
+		<div class="banner">
+			<div class="fixed-image section dark-translucent-bg parallax-bg-3">
+				<div class="container">
+				<div class="row">
+					<div class="col-md-6">
+						<form class="form-inline">
+							<label class="control-label col-md-3">Title</label>
+							<div class="input-group col-md-9">
+								<input id="title" type="text" class="form-control" placeholder="项目名称" value=""/>
+							</div>
+						</form>
+					</div>
+					<div class="col-md-6">
+						<form class="form-inline">
+							<label class="control-label col-md-3">Type</label>
+							<div class="input-group col-md-9">
+								<input id="type" type="text" class="form-control" placeholder="项目类型" list="type-list" value=""/>
+							</div>
+						</form>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-6">
+						<form class="form-inline">
+							<label class="control-label col-md-3">Start Date</label>
+							<div class="input-group col-md-9">
+								<input id="posting-date" class="form-control" type="datetime-local" value=""/>
+							</div>
+						</form>
+					</div>
+					<div class="col-md-6">
+						<form class="form-inline">
+							<label class="control-label col-md-3">Submit Date</label>
+							<div class="input-group col-md-9">
+								<input id="submission-end-date" class="form-control" type="datetime-local" value=""/>
+							</div>
+						</form>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-6">
+						<form class="form-inline" >
+							<label class="control-label col-md-3" >Payment/$</label>
+							<div class="input-group col-md-9">
+								<input id="prize" class="form-control" type="number" placeholder="项目金额" required="required" value=""/>
+							</div>									
+						</form>												
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-6">
+						<form class="form-inline has-feedback">
+							<label class="control-label col-md-3" >Technologys</label>
+							<span class="input-group col-md-9">
+								<input type="text" id="tech" list="tech-list" class="form-control" value=""/>
+								<a href="javascript:addTech();"><i class="fa fa-plus form-control-feedback" style="color:grey"></i></a>
+							</span>									
+						</form>			
+					</div>
+					<div class="col-md-6" style="padding:10px 45px 10px 45px;" id="tech_input">	
+						<a class="crumb-select-item" href="#" rel="nofollow" title="四季">
+							<em>四季</em> <i></i>
+						</a>	
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-6">
+						<form class="form-inline has-feedback">
+							<label class="control-label col-md-3" >Platforms</label>
+							<span class="input-group col-md-9">
+								<input type="text" id="plat" list="plat-list" class="form-control" value=""/>
+								<a href="javascript:addPlat();"><i class="fa fa-plus form-control-feedback" style="color:grey"></i></a>
+							</span>									
+						</form>			
+					</div>
+					<div class="col-md-6" style="padding:10px 45px 10px 45px;" id="plat_input">
+					</div>
+				</div>
+				<!-- html模板  start -->
+				<textarea style="display:none;">							
+					<a class="crumb-select-item" href="#" rel="nofollow" title="$name$" id="tag_$name$">
+						<em>$name$</em> <i></i>
+					</a>
+				</textarea>							
+				<!-- html模板 end -->	
+				<div class="row">
+					<form class="form-inline">
+						<label class="control-label col-md-2 col-lg-2">Challenge Overview</label>
+						<div class="input-group col-md-7 col-lg-7"><textarea id="description" class="col-md-12 col-lg-12" placeholder="项目描述" rows="1" value=""></textarea></div>
+					</form>
+				</div>
+				<div class="col-sm-offset-4 col-md-offset-4 col-lg-offset-4">
+					<button class="btn btn-default " id="post" type="button" style="color: steelblue; font-size: 18px;">recommend</button>
+				</div>
+				</div>
+			</div>
+		</div>		
+		<!-- form end -->
+			
+		<div class="container">
+			<div class="row" name='result[]' style="display: none;">
+				<div class="col-sm-10 col-md-10 col-lg-10 col-sm-offset-1 col-md-offset-1 col-lg-offset-1 " style="background-color: white; height: 100px;">
+					<div class="col-sm-4 col-md-4 col-lg-4 pic" >
+						<div class="col-sm-4 col-md-4 col-lg-4 pic" >
+							<img class="img-rounded touxiang" onerror="javascript:this.src='img/touxiang2.png'"/>
+						</div>
+						<div class="col-sm-8 col-md-8 col-lg-8 col-sm-offset-4 col-md-offset-4 col-lg-offset-4" >
+							<div><a target="_blank" ><span name="handle" ></span></a></div>
+							<div><span name="country"></span></div>
+							<br />
+							<div class='touchdown'><span name='memberSince'></span></div>
+						</div>
+					</div>
+					<div class="col-sm-8 col-md-8 col-lg-8 col-sm-offset-4 col-md-offset-4 col-lg-offset-4">
+						<div><a name="quote-a" href="#title" title=""><span name="quote">""</span></a></div>
+						<br />
+						<div style="font-size: x-large;"><span class="label label-default">SKILLS</span></div>
+						<div><a name="skills-a" href="#title" title=""><span name="skills"></span></a></div>
+					</div>
+				</div>
+			</div>
+			<div class="row" name='result[]' style="display: none;">
+				<div class="col-sm-10 col-md-10 col-lg-10 col-sm-offset-1 col-md-offset-1 col-lg-offset-1 topborder">
+					<div class="col-sm-4 col-md-4 col-lg-4 pic" >
+						<div class="col-sm-4 col-md-4 col-lg-4 pic" >
+							<img class="img-rounded touxiang" onerror="javascript:this.src='img/touxiang2.png'"/>
+						</div>
+						<div class="col-sm-8 col-md-8 col-lg-8 col-sm-offset-4 col-md-offset-4 col-lg-offset-4" >
+							<div><a target="_blank"><span name="handle" ></span></nobr></a></div>
+							<div><span name="country"></span></div>
+							<br />
+							<div class='touchdown'><span name='memberSince'></span></div>
+						</div>
+					</div>
+					<div class="col-sm-8 col-md-8 col-lg-8 col-sm-offset-4 col-md-offset-4 col-lg-offset-4">
+						<div><a name="quote-a" href="#title" title=""><span name="quote">""</span></a></div>
+						<br />
+						<div style="font-size: x-large;" ><span class="label label-default">SKILLS</span></div>
+						<div><a name="skills-a" href="#title" title=""><span name="skills"></span></a></div>
+					</div>
+				</div>
+			</div>
+			<div class="row" name='result[]' style="display: none;">
+				<div class="col-sm-10 col-md-10 col-lg-10 col-sm-offset-1 col-md-offset-1 col-lg-offset-1 topborder">
+					<div class="col-sm-4 col-md-4 col-lg-4 pic" >
+						<div class="col-sm-4 col-md-4 col-lg-4 pic" >
+							<img class="img-rounded touxiang" onerror="javascript:this.src='img/touxiang2.png'"/>
+						</div>
+						<div class="col-sm-8 col-md-8 col-lg-8 col-sm-offset-4 col-md-offset-4 col-lg-offset-4" >
+							<div><a target="_blank"><nobr><span name="handle" ></span></nobr></a></div>
+							<div><span name="country"></span></div>
+							<br />
+							<div class='touchdown'><span name='memberSince'></span></div>
+						</div>
+					</div>
+					<div class="col-sm-8 col-md-8 col-lg-8 col-sm-offset-4 col-md-offset-4 col-lg-offset-4">
+						<div><a name="quote-a" href="#title" title=""><span name="quote">""</span></a></div>
+						<br />
+						<div style="font-size: x-large;" ><span class="label label-default">SKILLS</span></div>
+						<div><a name="skills-a" href="#title" title=""><span name="skills"></span></a></div>
+					</div>
+				</div>
+			</div>
+			<div class="row" name='result[]' style="display: none;">
+				<div class="col-sm-10 col-md-10 col-lg-10 col-sm-offset-1 col-md-offset-1 col-lg-offset-1 topborder">
+					<div class="col-sm-4 col-md-4 col-lg-4 pic" >
+						<div class="col-sm-4 col-md-4 col-lg-4 pic" >
+							<img class="img-rounded touxiang" onerror="javascript:this.src='img/touxiang2.png'"/>
+						</div>
+						<div class="col-sm-8 col-md-8 col-lg-8 col-sm-offset-4 col-md-offset-4 col-lg-offset-4" >
+							<div><a target="_blank"><span name="handle" ></span></nobr></a></div>
+							<div><span name="country"></span></div>
+							<br />
+							<div class='touchdown'><span name='memberSince'></span></div>
+						</div>
+					</div>
+					<div class="col-sm-8 col-md-8 col-lg-8 col-sm-offset-4 col-md-offset-4 col-lg-offset-4">
+						<div><a name="quote-a" href="#title" title=""><span name="quote">""</span></a></div>
+						<br />
+						<div style="font-size: x-large;" ><span class="label label-default">SKILLS</span></div>
+						<div><a name="skills-a" href="#title" title=""><span name="skills"></span></a></div>
+					</div>
+				</div>
+			</div>
+			<div class="row" name='result[]' style="display: none;">
+				<div class="col-sm-10 col-md-10 col-lg-10 col-sm-offset-1 col-md-offset-1 col-lg-offset-1 topborder">
+					<div class="col-sm-4 col-md-4 col-lg-4 pic" >
+						<div class="col-sm-4 col-md-4 col-lg-4 pic" >
+							<img class="img-rounded touxiang" onerror="javascript:this.src='img/touxiang2.png'"/>
+						</div>
+						<div class="col-sm-8 col-md-8 col-lg-8 col-sm-offset-4 col-md-offset-4 col-lg-offset-4" >
+							<div><a target="_blank"><nobr><span name="handle" ></span></nobr></a></div>
+							<div><span name="country"></span></div>
+							<br />
+							<div class='touchdown'><span name='memberSince'></span></div>
+						</div>
+					</div>
+					<div class="col-sm-8 col-md-8 col-lg-8 col-sm-offset-4 col-md-offset-4 col-lg-offset-4">
+						<div><a name="quote-a" href="#title" title=""><span name="quote">""</span></a></div>
+						<br />
+						<div style="font-size: x-large;" ><span class="label label-default">SKILLS</span></div>
+						<div><a name="skills-a" href="#title" title=""><span name="skills"></span></a></div>
+					</div>
+				</div>
+			</div>
+			<div class="row" name='result[]' style="display: none;">
+				<div class="col-sm-10 col-md-10 col-lg-10 col-sm-offset-1 col-md-offset-1 col-lg-offset-1 topborder">
+					<div class="col-sm-4 col-md-4 col-lg-4 pic" >
+						<div class="col-sm-4 col-md-4 col-lg-4 pic" >
+							<img class="img-rounded touxiang" onerror="javascript:this.src='img/touxiang2.png'"/>
+						</div>
+						<div class="col-sm-8 col-md-8 col-lg-8 col-sm-offset-4 col-md-offset-4 col-lg-offset-4" >
+							<div><a target="_blank"><nobr><span name="handle" ></span></nobr></a></div>
+							<div><span name="country"></span></div>
+							<br />
+							<div class='touchdown'><span name='memberSince'></span></div>
+						</div>
+					</div>
+					<div class="col-sm-8 col-md-8 col-lg-8 col-sm-offset-4 col-md-offset-4 col-lg-offset-4">
+						<div><a name="quote-a" href="#title" title=""><span name="quote">""</span></a></div>
+						<br />
+						<div style="font-size: x-large;" ><span class="label label-default">SKILLS</span></div>
+						<div><a name="skills-a" href="#title" title=""><span name="skills"></span></a></div>
+					</div>
+				</div>
+			</div>
+			<div class="row" name='result[]' style="display: none;">
+				<div class="col-sm-10 col-md-10 col-lg-10 col-sm-offset-1 col-md-offset-1 col-lg-offset-1 topborder">
+					<div class="col-sm-4 col-md-4 col-lg-4 pic" >
+						<div class="col-sm-4 col-md-4 col-lg-4 pic" >
+							<img class="img-rounded touxiang" onerror="javascript:this.src='img/touxiang2.png'"/>
+						</div>
+						<div class="col-sm-8 col-md-8 col-lg-8 col-sm-offset-4 col-md-offset-4 col-lg-offset-4" >
+							<div><a target="_blank"><nobr><span name="handle" ></span></nobr></a></div>
+							<div><span name="country"></span></div>
+							<br />
+							<div class='touchdown'><span name='memberSince'></span></div>
+						</div>
+					</div>
+					<div class="col-sm-8 col-md-8 col-lg-8 col-sm-offset-4 col-md-offset-4 col-lg-offset-4">
+						<div><a name="quote-a" href="#title" title=""><span name="quote">""</span></a></div>
+						<br />
+						<div style="font-size: x-large;" ><span class="label label-default">SKILLS</span></div>
+						<div><a name="skills-a" href="#title" title=""><span name="skills"></span></a></div>
+					</div>
+				</div>
+			</div>
+			<div class="row" name='result[]' style="display: none;">
+				<div class="col-sm-10 col-md-10 col-lg-10 col-sm-offset-1 col-md-offset-1 col-lg-offset-1 topborder">
+					<div class="col-sm-4 col-md-4 col-lg-4 pic" >
+						<div class="col-sm-4 col-md-4 col-lg-4 pic" >
+							<img class="img-rounded touxiang" onerror="javascript:this.src='img/touxiang2.png'"/>
+						</div>
+						<div class="col-sm-8 col-md-8 col-lg-8 col-sm-offset-4 col-md-offset-4 col-lg-offset-4" >
+							<div><a target="_blank"><nobr><span name="handle" ></span></nobr></a></div>
+							<div><span name="country"></span></div>
+							<br />
+							<div class='touchdown'><span name='memberSince'></span></div>
+						</div>
+					</div>
+					<div class="col-sm-8 col-md-8 col-lg-8 col-sm-offset-4 col-md-offset-4 col-lg-offset-4">
+						<div><a name="quote-a" href="#title" title=""><span name="quote">""</span></a></div>
+						<br />
+						<div style="font-size: x-large;" ><span class="label label-default">SKILLS</span></div>
+						<div><a name="skills-a" href="#title" title=""><span name="skills"></span></a></div>
+					</div>
+				</div>
+			</div>
+			<div class="row" name='result[]' style="display: none;">
+				<div class="col-sm-10 col-md-10 col-lg-10 col-sm-offset-1 col-md-offset-1 col-lg-offset-1 topborder">
+					<div class="col-sm-4 col-md-4 col-lg-4 pic" >
+						<div class="col-sm-4 col-md-4 col-lg-4 pic" >
+							<img class="img-rounded touxiang" onerror="javascript:this.src='img/touxiang2.png'"/>
+						</div>
+						<div class="col-sm-8 col-md-8 col-lg-8 col-sm-offset-4 col-md-offset-4 col-lg-offset-4" >
+							<div><a target="_blank"><nobr><span name="handle" ></span></nobr></a></div>
+							<div><span name="country"></span></div>
+							<br />
+							<div class='touchdown'><span name='memberSince'></span></div>
+						</div>
+					</div>
+					<div class="col-sm-8 col-md-8 col-lg-8 col-sm-offset-4 col-md-offset-4 col-lg-offset-4">
+						<div><a name="quote-a" href="#title" title=""><span name="quote">""</span></a></div>
+						<br />
+						<div style="font-size: x-large;" ><span class="label label-default">SKILLS</span></div>
+						<div><a name="skills-a" href="#title" title=""><span name="skills"></span></a></div>
+					</div>
+				</div>
+			</div>
+			<div class="row" name='result[]' style="display: none;">
+				<div class="col-sm-10 col-md-10 col-lg-10 col-sm-offset-1 col-md-offset-1 col-lg-offset-1 topborder">
+					<div class="col-sm-4 col-md-4 col-lg-4 pic" >
+						<div class="col-sm-4 col-md-4 col-lg-4 pic" >
+							<img class="img-rounded touxiang" onerror="javascript:this.src='img/touxiang2.png'"/>
+						</div>
+						<div class="col-sm-8 col-md-8 col-lg-8 col-sm-offset-4 col-md-offset-4 col-lg-offset-4" >
+							<div><a target="_blank"><nobr><span name="handle" ></span></nobr></a></div>
+							<div><span name="country"></span></div>
+							<br />
+							<div class='touchdown'><span name='memberSince'></span></div>
+						</div>
+					</div>
+					<div class="col-sm-8 col-md-8 col-lg-8 col-sm-offset-4 col-md-offset-4 col-lg-offset-4">
+						<div><a name="quote-a" href="#title" title=""><span name="quote">""</span></a></div>
+						<br />
+						<div style="font-size: x-large;" ><span class="label label-default">SKILLS</span></div>
+						<div><a name="skills-a" href="#title" title=""><span name="skills"></span></a></div>
+					</div>
+				</div>
+			</div>
+			<div class="row" name='result[]' style="display: none;">
+				<div class="col-sm-10 col-md-10 col-lg-10 col-sm-offset-1 col-md-offset-1 col-lg-offset-1 topborder">
+					<div class="col-sm-4 col-md-4 col-lg-4 pic" >
+						<div class="col-sm-4 col-md-4 col-lg-4 pic" >
+							<img class="img-rounded touxiang" onerror="javascript:this.src='img/touxiang2.png'"/>
+						</div>
+						<div class="col-sm-8 col-md-8 col-lg-8 col-sm-offset-4 col-md-offset-4 col-lg-offset-4" >
+							<div><a target="_blank"><nobr><span name="handle" ></span></nobr></a></div>
+							<div><span name="country"></span></div>
+							<br />
+							<div class='touchdown'><span name='memberSince'></span></div>
+						</div>
+					</div>
+					<div class="col-sm-8 col-md-8 col-lg-8 col-sm-offset-4 col-md-offset-4 col-lg-offset-4">
+						<div><a name="quote-a" href="#title" title=""><span name="quote">""</span></a></div>
+						<br />
+						<div style="font-size: x-large;" ><span class="label label-default">SKILLS</span></div>
+						<div><a name="skills-a" href="#title" title=""><span name="skills"></span></a></div>
+					</div>
+				</div>
+			</div>
+			<div class="row" name='result[]' style="display: none;">
+				<div class="col-sm-10 col-md-10 col-lg-10 col-sm-offset-1 col-md-offset-1 col-lg-offset-1 topborder">
+					<div class="col-sm-4 col-md-4 col-lg-4 pic" >
+						<div class="col-sm-4 col-md-4 col-lg-4 pic" >
+							<img class="img-rounded touxiang" onerror="javascript:this.src='img/touxiang2.png'"/>
+						</div>
+						<div class="col-sm-8 col-md-8 col-lg-8 col-sm-offset-4 col-md-offset-4 col-lg-offset-4" >
+							<div><a target="_blank"><nobr><span name="handle" ></span></nobr></a></div>
+							<div><span name="country"></span></div>
+							<br />
+							<div class='touchdown'><span name='memberSince'></span></div>
+						</div>
+					</div>
+					<div class="col-sm-8 col-md-8 col-lg-8 col-sm-offset-4 col-md-offset-4 col-lg-offset-4">
+						<div><a name="quote-a" href="#title" title=""><span name="quote">""</span></a></div>
+						<br />
+						<div style="font-size: x-large;" ><span class="label label-default">SKILLS</span></div>
+						<div><a name="skills-a" href="#title" title=""><span name="skills"></span></a></div>
+					</div>
+				</div>
+			</div>
+			<div class="row" name='result[]' style="display: none;">
+				<div class="col-sm-10 col-md-10 col-lg-10 col-sm-offset-1 col-md-offset-1 col-lg-offset-1 topborder">
+					<div class="col-sm-4 col-md-4 col-lg-4 pic" >
+						<div class="col-sm-4 col-md-4 col-lg-4 pic" >
+							<img class="img-rounded touxiang" onerror="javascript:this.src='img/touxiang2.png'"/>
+						</div>
+						<div class="col-sm-8 col-md-8 col-lg-8 col-sm-offset-4 col-md-offset-4 col-lg-offset-4" >
+							<div><a target="_blank"><nobr><span name="handle" ></span></nobr></a></div>
+							<div><span name="country"></span></div>
+							<br />
+							<div class='touchdown'><span name='memberSince'></span></div>
+						</div>
+					</div>
+					<div class="col-sm-8 col-md-8 col-lg-8 col-sm-offset-4 col-md-offset-4 col-lg-offset-4">
+						<div><a name="quote-a" href="#title" title=""><span name="quote">""</span></a></div>
+						<br />
+						<div style="font-size: x-large;" ><span class="label label-default">SKILLS</span></div>
+						<div><a name="skills-a" href="#title" title=""><span name="skills"></span></a></div>
+					</div>
+				</div>
+			</div>
+			<div class="row" name='result[]' style="display: none;">
+				<div class="col-sm-10 col-md-10 col-lg-10 col-sm-offset-1 col-md-offset-1 col-lg-offset-1 topborder">
+					<div class="col-sm-4 col-md-4 col-lg-4 pic" >
+						<div class="col-sm-4 col-md-4 col-lg-4 pic" >
+							<img class="img-rounded touxiang" onerror="javascript:this.src='img/touxiang2.png'"/>
+						</div>
+						<div class="col-sm-8 col-md-8 col-lg-8 col-sm-offset-4 col-md-offset-4 col-lg-offset-4" >
+							<div><a target="_blank"><nobr><span name="handle" ></span></nobr></a></div>
+							<div><span name="country"></span></div>
+							<br />
+							<div class='touchdown'><span name='memberSince'></span></div>
+						</div>
+					</div>
+					<div class="col-sm-8 col-md-8 col-lg-8 col-sm-offset-4 col-md-offset-4 col-lg-offset-4">
+						<div><a name="quote-a" href="#title" title=""><span name="quote">""</span></a></div>
+						<br />
+						<div style="font-size: x-large;" ><span class="label label-default">SKILLS</span></div>
+						<div><a name="skills-a" href="#title" title=""><span name="skills"></span></a></div>
+					</div>
+				</div>
+			</div>
+			<div class="row" name='result[]' style="display: none;">
+				<div class="col-sm-10 col-md-10 col-lg-10 col-sm-offset-1 col-md-offset-1 col-lg-offset-1 topborder">
+					<div class="col-sm-4 col-md-4 col-lg-4 pic" >
+						<div class="col-sm-4 col-md-4 col-lg-4 pic" >
+							<img class="img-rounded touxiang" onerror="javascript:this.src='img/touxiang2.png'"/>
+						</div>
+						<div class="col-sm-8 col-md-8 col-lg-8 col-sm-offset-4 col-md-offset-4 col-lg-offset-4" >
+							<div><a target="_blank"><nobr><span name="handle" ></span></nobr></a></div>
+							<div><span name="country"></span></div>
+							<br />
+							<div class='touchdown'><span name='memberSince'></span></div>
+						</div>
+					</div>
+					<div class="col-sm-8 col-md-8 col-lg-8 col-sm-offset-4 col-md-offset-4 col-lg-offset-4">
+						<div><a name="quote-a" href="#title" title=""><span name="quote">""</span></a></div>
+						<br />
+						<div style="font-size: x-large;" ><span class="label label-default">SKILLS</span></div>
+						<div><a name="skills-a" href="#title" title=""><span name="skills"></span></a></div>
+					</div>
+				</div>
+			</div>
+			<div class="row" name='result[]' style="display: none;">
+				<div class="col-sm-10 col-md-10 col-lg-10 col-sm-offset-1 col-md-offset-1 col-lg-offset-1 topborder">
+					<div class="col-sm-4 col-md-4 col-lg-4 pic" >
+						<div class="col-sm-4 col-md-4 col-lg-4 pic" >
+							<img class="img-rounded touxiang" onerror="javascript:this.src='img/touxiang2.png'"/>
+						</div>
+						<div class="col-sm-8 col-md-8 col-lg-8 col-sm-offset-4 col-md-offset-4 col-lg-offset-4" >
+							<div><a target="_blank"><nobr><span name="handle" ></span></nobr></a></div>
+							<div><span name="country"></span></div>
+							<br />
+							<div class='touchdown'><span name='memberSince'></span></div>
+						</div>
+					</div>
+					<div class="col-sm-8 col-md-8 col-lg-8 col-sm-offset-4 col-md-offset-4 col-lg-offset-4">
+						<div><a name="quote-a" href="#title" title=""><span name="quote">""</span></a></div>
+						<br />
+						<div style="font-size: x-large;" ><span class="label label-default">SKILLS</span></div>
+						<div><a name="skills-a" href="#title" title=""><span name="skills"></span></a></div>
+					</div>
+				</div>
+			</div>
+			<div class="row" name='result[]' style="display: none;">
+				<div class="col-sm-10 col-md-10 col-lg-10 col-sm-offset-1 col-md-offset-1 col-lg-offset-1 topborder">
+					<div class="col-sm-4 col-md-4 col-lg-4 pic" >
+						<div class="col-sm-4 col-md-4 col-lg-4 pic" >
+							<img class="img-rounded touxiang" onerror="javascript:this.src='img/touxiang2.png'"/>
+						</div>
+						<div class="col-sm-8 col-md-8 col-lg-8 col-sm-offset-4 col-md-offset-4 col-lg-offset-4" >
+							<div><a target="_blank"><nobr><span name="handle" ></span></nobr></a></div>
+							<div><span name="country"></span></div>
+							<br />
+							<div class='touchdown'><span name='memberSince'></span></div>
+						</div>
+					</div>
+					<div class="col-sm-8 col-md-8 col-lg-8 col-sm-offset-4 col-md-offset-4 col-lg-offset-4">
+						<div><a name="quote-a" href="#title" title=""><span name="quote">""</span></a></div>
+						<br />
+						<div style="font-size: x-large;" ><span class="label label-default">SKILLS</span></div>
+						<div><a name="skills-a" href="#title" title=""><span name="skills"></span></a></div>
+					</div>
+				</div>
+			</div>
+			<div class="row" name='result[]' style="display: none;">
+				<div class="col-sm-10 col-md-10 col-lg-10 col-sm-offset-1 col-md-offset-1 col-lg-offset-1 topborder">
+					<div class="col-sm-4 col-md-4 col-lg-4 pic" >
+						<div class="col-sm-4 col-md-4 col-lg-4 pic" >
+							<img class="img-rounded touxiang" onerror="javascript:this.src='img/touxiang2.png'"/>
+						</div>
+						<div class="col-sm-8 col-md-8 col-lg-8 col-sm-offset-4 col-md-offset-4 col-lg-offset-4" >
+							<div><a target="_blank"><nobr><span name="handle" ></span></nobr></a></div>
+							<div><span name="country"></span></div>
+							<br />
+							<div class='touchdown'><span name='memberSince'></span></div>
+						</div>
+					</div>
+					<div class="col-sm-8 col-md-8 col-lg-8 col-sm-offset-4 col-md-offset-4 col-lg-offset-4">
+						<div><a name="quote-a" href="#title" title=""><span name="quote">""</span></a></div>
+						<br />
+						<div style="font-size: x-large;" ><span class="label label-default">SKILLS</span></div>
+						<div><a name="skills-a" href="#title" title=""><span name="skills"></span></a></div>
+					</div>
+				</div>
+			</div>
+			<div class="row" name='result[]' style="display: none;">
+				<div class="col-sm-10 col-md-10 col-lg-10 col-sm-offset-1 col-md-offset-1 col-lg-offset-1 topborder">
+					<div class="col-sm-4 col-md-4 col-lg-4 pic" >
+						<div class="col-sm-4 col-md-4 col-lg-4 pic" >
+							<img class="img-rounded touxiang" onerror="javascript:this.src='img/touxiang2.png'"/>
+						</div>
+						<div class="col-sm-8 col-md-8 col-lg-8 col-sm-offset-4 col-md-offset-4 col-lg-offset-4" >
+							<div><a target="_blank"><nobr><span name="handle" ></span></nobr></a></div>
+							<div><span name="country"></span></div>
+							<br />
+							<div class='touchdown'><span name='memberSince'></span></div>
+						</div>
+					</div>
+					<div class="col-sm-8 col-md-8 col-lg-8 col-sm-offset-4 col-md-offset-4 col-lg-offset-4">
+						<div><a name="quote-a" href="#title" title=""><span name="quote">""</span></a></div>
+						<br />
+						<div style="font-size: x-large;" ><span class="label label-default">SKILLS</span></div>
+						<div><a name="skills-a" href="#title" title=""><span name="skills"></span></a></div>
+					</div>
+				</div>
+			</div>
+			<div class="row" name='result[]' style="display: none;">
+				<div class="col-sm-10 col-md-10 col-lg-10 col-sm-offset-1 col-md-offset-1 col-lg-offset-1 topborder">
+					<div class="col-sm-4 col-md-4 col-lg-4 pic" >
+						<div class="col-sm-4 col-md-4 col-lg-4 pic" >
+							<img class="img-rounded touxiang" onerror="javascript:this.src='img/touxiang2.png'"/>
+						</div>
+						<div class="col-sm-8 col-md-8 col-lg-8 col-sm-offset-4 col-md-offset-4 col-lg-offset-4" >
+							<div><a target="_blank"><nobr><span name="handle" ></span></nobr></a></div>
+							<div><span name="country"></span></div>
+							<br />
+							<div class='touchdown'><span name='memberSince'></span></div>
+						</div>
+					</div>
+					<div class="col-sm-8 col-md-8 col-lg-8 col-sm-offset-4 col-md-offset-4 col-lg-offset-4">
+						<div><a name="quote-a" href="#title" title=""><span name="quote">""</span></a></div>
+						<br />
+						<div style="font-size: x-large;" ><span class="label label-default">SKILLS</span></div>
+						<div><a name="skills-a" href="#title" title=""><span name="skills"></span></a></div>
+					</div>
+				</div>
+			</div>
+			<div class="row" name='result[]' style="display: none;">
+				<div class="col-sm-10 col-md-10 col-lg-10 col-sm-offset-1 col-md-offset-1 col-lg-offset-1 topborder">
+					<div class="col-sm-4 col-md-4 col-lg-4 pic" >
+						<div class="col-sm-4 col-md-4 col-lg-4 pic" >
+							<img class="img-rounded touxiang" onerror="javascript:this.src='img/touxiang2.png'"/>
+						</div>
+						<div class="col-sm-8 col-md-8 col-lg-8 col-sm-offset-4 col-md-offset-4 col-lg-offset-4" >
+							<div><a target="_blank"><span name="handle" ></span></a></div>
+							<div><span name="country"></span></div>
+							<br />
+							<div class='touchdown'><span name='memberSince'></span></div>
+						</div>
+					</div>
+					<div class="col-sm-8 col-md-8 col-lg-8 col-sm-offset-4 col-md-offset-4 col-lg-offset-4">
+						<div><a name="quote-a" href="#title" title=""><span name="quote">""</span></a></div>
+						<br />
+						<div style="font-size: x-large;" ><span class="label label-default">SKILLS</span></div>
+						<div><a name="skills-a" href="#title" title=""><span name="skills"></span></a></div>
+					</div>
+				</div>
+			</div>
+			
+			
+			<div class="row">
+				<div class="col-sm-12 col-md-12 col-lg-12"  >
+					<p id="show-add" style="display: none;cursor: pointer;text-align: center;font-size: 150%;color: darkgrey;">more</p>
+				</div>
+				
+				<div class="spinner" style="display:none">
+					<div class="spinner-container container1">
+					    <div class="circle1"></div>
+					    <div class="circle2"></div>
+					    <div class="circle3"></div>
+					    <div class="circle4"></div>
+					</div>
+					<div class="spinner-container container2">
+					    <div class="circle1"></div>
+					    <div class="circle2"></div>
+					    <div class="circle3"></div>
+					    <div class="circle4"></div>
+					</div>
+					<div class="spinner-container container3">
+					    <div class="circle1"></div>
+					    <div class="circle2"></div>
+					    <div class="circle3"></div>
+					    <div class="circle4"></div>
+					  </div>
+				</div>
+				
+			</div>
+		</div>
+	</div>
+	<!-- 修改目录 -->
+	<div layout:fragment="function">			
+	<script type="text/javascript">
+
+	var techs = [], plats = [];
+	var htmlTemp = $("textarea")[0].value, techBox = $("#tech_input")[0], platBox = $("#plat_input")[0];
+
+	$(function() {
+		/* 选择Stackoverflow标签  */
+		$('#topcoder').addClass("active");
+		
+		$(".crumb-select-item").click(function(){
+			//alert($(this).val(title));
+			$(this).remove();
+			for(var i in techs){
+				if(techs[i] == $(this).val(title) ){
+					techs.splice(i,1);
+					break;
+				}
+			}
+			for(var i in techs) alert(techs[i]);
+		});
+	});
+	
+	</script>		
+	<datalist id="type-list">
+	   	<option value="Copilot_Posting"/>
+		<option value="Conceptualization"/>
+		<option value="Specification"/>
+		<option value="Architecture"/>
+		<option value="Design"/>
+		<option value="Development"/>
+		<option value="RIA_Build_Competition"/>
+		<option value="UI_Prototype_Competition"/>
+		<option value="Assembly_Competition"/>
+		<option value="Test_Suits"/>
+		<option value="Test_Scenarios"/>
+		<option value="Content_Creation"/>
+		<option value="Marathon_Match"/>
+		<option value="Bug_Hunt"/>
+		<option value="First2Finish"/>
+		<option value="Code"/>
+	</datalist>
+	<datalist id="tech-list" >
+	   	<option value=".NET"/>
+		<option value=".NET System.Addins"/>
+		<option value="ADO.NET"/>
+		<option value="AJAX"/>
+		<option value="API"/>
+		<option value="ASP.NET"/>
+		<option value="ASP.NET AJAX"/>
+		<option value="ASP.NET Web Parts"/>
+		<option value="ActionScript"/>
+		<option value="Active Directory"/>
+		<option value="Android"/>
+		<option value="Angular.js"/>
+		<option value="Ant"/>
+		<option value="Apache Derby"/>
+		<option value="Apex"/>
+		<option value="Applet"/>
+		<option value="Backbone.js"/>
+		<option value="BizTalk"/>
+		<option value="Blackberry SDK"/>
+		<option value="Bootstrap"/>
+		<option value="C"/>
+		<option value="C#"/>
+		<option value="C++"/>
+		<option value="COBOL"/>
+		<option value="COM"/>
+		<option value="COM+"/>
+		<option value="CSS"/>
+		<option value="Castor"/>
+		<option value="Chatter"/>
+		<option value="Cisco"/>
+		<option value="ClickOnce"/>
+		<option value="CoffeeScript"/>
+		<option value="Data Science"/>
+		<option value="Databasedotcom"/>
+		<option value="Docker"/>
+		<option value="Dojo"/>
+		<option value="Drools"/>
+		<option value="EJB"/>
+		<option value="Eclipse Plugin"/>
+		<option value="Elasticsearch"/>
+		<option value="Express"/>
+		<option value="Flash"/>
+		<option value="Flex"/>
+		<option value="Force.com Sites"/>
+		<option value="Fortran"/>
+		<option value="Go"/>
+		<option value="Google API"/>
+		<option value="Google App Engine"/>
+		<option value="Gradle"/>
+		<option value="Grommet"/>
+		<option value="Groovy"/>
+		<option value="HPE Haven OnDemand"/>
+		<option value="HTML"/>
+		<option value="HTML5"/>
+		<option value="HTTP"/>
+		<option value="Hibernate"/>
+		<option value="IBM AIX"/>
+		<option value="IBM COGNOS"/>
+		<option value="IBM Content Manager"/>
+		<option value="IBM DB2"/>
+		<option value="IBM Lotus Domino"/>
+		<option value="IBM Lotus Notes"/>
+		<option value="IBM PL/1"/>
+		<option value="IBM REXX"/>
+		<option value="IBM Rational Application Developer"/>
+		<option value="IBM Rational Data Architect"/>
+		<option value="IBM Rational Data Studio"/>
+		<option value="IBM Rational Software Architect"/>
+		<option value="IBM Rational Team Concert"/>
+		<option value="IBM WebSphere Application Server"/>
+		<option value="IBM WebSphere DataPower"/>
+		<option value="IBM WebSphere DataStage"/>
+		<option value="IBM WebSphere MQ"/>
+		<option value="IBM WebSphere Message Broker"/>
+		<option value="IBM WebSphere Portal"/>
+		<option value="IIS"/>
+		<option value="Illustrator"/>
+		<option value="J2EE"/>
+		<option value="J2ME"/>
+		<option value="JBoss Seam"/>
+		<option value="JDBC"/>
+		<option value="JFace"/>
+		<option value="JMS"/>
+		<option value="JPA"/>
+		<option value="JQuery"/>
+		<option value="JSF"/>
+		<option value="JSON"/>
+		<option value="JSP"/>
+		<option value="JUnit"/>
+		<option value="Jabber"/>
+		<option value="Java"/>
+		<option value="Java Application"/>
+		<option value="JavaBean"/>
+		<option value="JavaScript"/>
+		<option value="LDAP"/>
+		<option value="Lightning"/>
+		<option value="MIDP 2.0"/>
+		<option value="MSMQ"/>
+		<option value="Matlab"/>
+		<option value="Maven"/>
+		<option value="Microsoft SilverLight"/>
+		<option value="MongoDB"/>
+		<option value="MySQL"/>
+		<option value="NoSQL"/>
+		<option value="Node.js"/>
+		<option value="OSX"/>
+		<option value="Objective C"/>
+		<option value="Oracle 10g"/>
+		<option value="Oracle 9i"/>
+		<option value="Other"/>
+		<option value="PHP"/>
+		<option value="PL/SQL"/>
+		<option value="Perl"/>
+		<option value="PhoneGap"/>
+		<option value="Photoshop"/>
+		<option value="Play! Framework"/>
+		<option value="PostgreSQL"/>
+		<option value="Python"/>
+		<option value="R"/>
+		<option value="REST"/>
+		<option value="ReactJS"/>
+		<option value="Redis"/>
+		<option value="Ruby"/>
+		<option value="Ruby on Rails"/>
+		<option value="SAP"/>
+		<option value="SFDC Mobile"/>
+		<option value="SQL"/>
+		<option value="SQL Server"/>
+		<option value="SSIS"/>
+		<option value="SWT"/>
+		<option value="Salesforce"/>
+		<option value="Sencha Touch 2"/>
+		<option value="Servlet"/>
+		<option value="Sharepoint 3.0"/>
+		<option value="Siebel"/>
+		<option value="Spark"/>
+		<option value="Spring"/>
+		<option value="Struts"/>
+		<option value="Swift"/>
+		<option value="Swing"/>
+		<option value="Titanium"/>
+		<option value="Twitter Bootstrap"/>
+		<option value="UML"/>
+		<option value="VB"/>
+		<option value="VB.NET"/>
+		<option value="Vertica"/>
+		<option value="Visualforce"/>
+		<option value="WPF"/>
+		<option value="Web Application"/>
+		<option value="Web Services"/>
+		<option value="WinForms Controls"/>
+		<option value="Windows Communication Foundation"/>
+		<option value="Windows Server"/>
+		<option value="Windows Workflow Foundation"/>
+		<option value="Word/Rich Text"/>
+		<option value="XAML"/>
+		<option value="XML"/>
+		<option value="XMPP"/>
+		<option value="XSL"/>
+		<option value="XUL"/>
+		<option value="Xcode"/>
+		<option value="iBATIS/MyBatis"/>
+		<option value="iOS"/>
+		<option value="iOS 5.0"/>
+		<option value="iOS 6.0"/>
+		<option value="iOS 8.0"/>
+		<option value="iOS 8.0"/>
+		<option value="jQuery"/>
+		<option value="jQuery Mobile"/>
+		<option value="tvOS"/>
+	</datalist>
+	<datalist id="plat-list">
+		<option value="AWS"/>
+		<option value="Android"/>
+		<option value="Beanstalk"/>
+		<option value="Box"/>
+		<option value="Brivo Labs"/>
+		<option value="Cisco"/>
+		<option value="Cloud Foundry"/>
+		<option value="CloudFactor"/>
+		<option value="DocuSign"/>
+		<option value="EC2"/>
+		<option value="Facebook"/>
+		<option value="FinancialForce"/>
+		<option value="Force.com"/>
+		<option value="Gaming"/>
+		<option value="Google"/>
+		<option value="HP Haven"/>
+		<option value="HPE Haven OnDemand"/>
+		<option value="HTML"/>
+		<option value="Heroku"/>
+		<option value="IBM Bluemix"/>
+		<option value="Linux"/>
+		<option value="MESH01"/>
+		<option value="Microsoft Azure"/>
+		<option value="Mobile"/>
+		<option value="NodeJS"/>
+		<option value="Other"/>
+		<option value="Salesforce.com"/>
+		<option value="Smartsheet"/>
+		<option value="Twilio"/>
+		<option value="Wordpress"/>
+		<option value="iOS"/>
+	</datalist>	
+	</div>
+
+
+</body>
+</html>

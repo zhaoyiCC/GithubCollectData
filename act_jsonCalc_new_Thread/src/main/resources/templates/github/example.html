@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	data-layout-decorate="~{header-footer}">
+
+<head>
+<meta charset="utf-8">
+	<script src="/js/dist/echarts.js"></script>
+</head>
+
+<body>
+
+	<div layout:fragment="content" class="show-project container">
+	
+		<div class="space-top"></div>
+		<div id="graph-details"></div>
+		<div id="graph" style="height:600px;width:1140px">此位置显示关系图谱</div>
+		<div class="space-bottom"></div>
+	</div>
+	<!-- 修改目录 -->
+	<div layout:fragment="function">
+		<script type="text/javascript">
+			
+	        // 路径配置
+            require.config({
+                paths: {
+                    echarts: '/js/dist'
+                }
+            });
+            
+            // 使用
+            require(
+                [
+                    'echarts',
+                    'echarts/chart/force' 
+                ],
+                function (ec) {
+                    // 基于准备好的dom，初始化echarts图表
+                    var myGraph = ec.init(document.getElementById('graph')); 
+	                myGraph.showLoading({ text : "Loading..." });
+                    					                    
+    				var option = optionGraph;
+
+    	 			$.ajax({ 
+    	               type : "get", 
+    	               async : true, //异步执行
+    	               url : "/api/github/subResourceGraph", 
+    	               data : {
+    	   				"Id" : 420897,
+    	   				"type" : "repo",
+    	   				"limit" : "100"
+    	   				}, 
+    	               dataType : "json", //返回数据形式为json
+    	               success : function(data) { 
+    	                   if (data) { 
+    	                	   var cat = [{name: 'Owner'},{name: 'Starer'}], nodes = [], links = [];    		                   	
+    		                   	for(var item in data.nodes){
+    		                   		var temp = {category: 0, name: '', value: 10, itemStyle: style[0][0]};
+    		                   		var k = data.nodes[item].category;
+    		                   		temp.category = k;
+    		                   		temp.name = data.nodes[item].name;
+    		                   		temp.value = 10/(1+k);
+    		                   		temp.itemStyle = style[0][k];
+    		                   		nodes.push(temp);
+    		                   	}
+    		                   	for(var item in data.links){
+    		                   		var temp = {source : 0, target : 1, weight : 1, name : "cooperate 1 time", history: [{name:"titl1",url:"#"}], itemStyle: style[1][0]};
+    		                   		var link = data.links[item];
+    		                   		temp.target = link.target;
+    		                   		temp.source = link.source;
+    		                   		temp.weight = parseInt(Math.random()*100);
+    		                   		temp.name = link.name;
+    		                   		temp.history = link.history;
+    		                   		temp.itemStyle = style[1][link.type];
+    		                   		links.push(temp);
+    		                   	}
+    		                   	option.tooltip.formatter = '{b}';
+    		                   	option.series[0].minRadius = 8;
+    		                   	option.series[0].maxRadius = 10;
+    		                   	option.series[0].itemStyle.normal.label.show = false;
+    		                   	option.series[0].itemStyle.normal.linkStyle.width = 1;
+    		                   	option.legend.data = [];
+    		                   	option.series[0].categories = cat;
+    		                   	option.series[0].nodes = nodes;
+    		                   	option.series[0].links = links;
+    		                   	
+    			                myGraph.setOption(option); 
+    			                myGraph.hideLoading();
+    	                   }
+    	               }, 
+    	               error : function(errorMsg) { 
+    						$("#details").empty().append("<h2>对不起，数据请求失败！</h2>");
+    	               } 
+    	            });   
+    				
+    				var ecConfig = require('echarts/config');
+    				function focus(param) {
+    				    var data = param.data;
+    				    var links = option.series[0].links;
+    				    var nodes = option.series[0].nodes;
+    				    if (
+    				        data.source != null
+    				        && data.target != null
+    				    ) { //点击的是边
+    				        var sourceNode = nodes[data.source];
+    				        var targetNode = nodes[data.target];
+    				        console.log("选中了边 " + sourceNode.name + ' -> ' + targetNode.name + ' (' + data.weight + ')');
+    				    } else { // 点击的是点
+    				        console.log("选中了" + data.name + '(' + data.value + ')');
+    				    }
+    				}
+    				myGraph.on(ecConfig.EVENT.CLICK, focus)
+    				
+    				myGraph.on(ecConfig.EVENT.FORCE_LAYOUT_END, function () {
+    				});                  
+            
+                }
+            );
+		</script>
+	</div>
+
+</body>
+
+</html>

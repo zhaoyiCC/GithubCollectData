@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	data-layout-decorate="~{layout}">
+
+<head>
+<meta charset="utf-8">
+</head>
+
+<body>
+
+	<div layout:fragment="content">
+
+		<!-- page-intro start-->
+		<!-- ================ -->
+		<div class="page-intro">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-12">
+						<ol class="breadcrumb">
+							<li><i class="fa fa-home pr-10"></i><a href="/github">Topcoder</a></li>
+							<li class="active">开发者能力排行</li>
+						</ol>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- page-intro end -->
+
+		<!-- main-container start -->
+		<!-- ================ -->
+		<section class="main-container">
+
+			<div class="container">
+			<div class="row">
+				<!-- main start -->
+				<!-- ================ -->
+				<div class="main col-md-12">
+					<form class="form-inline has-success has-feedback">
+						<label class="control-label" >选择能力标签:&nbsp</label>
+						<span class="input-group">
+							<input type="text" id="ability" list="ability-list" class="form-control" value=""/>
+							<a href="javascript:addAbility();"><i class="fa fa-plus form-control-feedback"></i></a>
+						</span>									
+					</form>						
+					<div style="margin:10px 20px 10px 30px">
+						<div style="min-height:40px" id="abilities">
+						<!-- html模板  start -->
+						<textarea style="display:none;" id="tag">							
+							<a class="crumb-select-item" href="#" rel="nofollow" title="$name$" id="tag_$name$">
+								<em>$name$</em> <i></i>
+							</a>
+						</textarea>							
+						<!-- html模板 end -->	
+						</div>
+						<button onclick="orderByAbility(0)" class="btn btn-default">搜索</button>
+					</div>	
+					
+					<div class="clearfix"></div>
+					
+					<div id="details" style="text-align:center">
+						<img name="loading" id="loading" src="/images/loader.gif" style="display:none; width: 200px; margin-left: 40%;"></img>	
+					</div>
+					<!-- html模板  start -->
+					<textarea style="display:none;" id="list-item">
+						<div class="list-with-image">
+							<div class="overlay-container">
+								<img src="$photoLink$" alt=""> 
+								<a href="#" class="overlay small"> </a>
+							</div>
+							<button style="float:right;margin-top:0;" onclick="javascript:window.open('/topcoder/showUser?handle=$handle$')" class="btn btn-sm btn-dark">能力值</button>							
+							<h2>
+								<a href="#">$handle$</a>
+							</h2>
+							<span class="tags-cloud">
+								<div class="tag"><a href="#"><i class="fa fa-tag pr-10"></i>business</a></div>
+								<div class="tag"><a href="#"><i class="fa fa-tag pr-10"></i>energy</a></div>
+							</span>
+						</div>
+					</textarea>							
+					<!-- html模板 end -->	
+					
+					<div  id="list" style="margin-top:20px;min-height:300px">	</div>
+					
+					<div class="clearfix"></div>
+
+					<!-- pagination start -->
+					<ul class="pagination">
+						<li id="prePage"><a href="javascript:orderByAbility(-1);"><<</a></li>
+						<li class="active"><a id="currentPage" href="#">0<span class="sr-only">(current)</span></a></li>
+						<li id="nextPage"><a href="javascript:orderByAbility(1);">>></a></li>
+					</ul>
+					<!-- pagination end -->						
+				</div>
+				<!-- main end -->
+			</div>
+			</div>
+		</section>
+		<!-- main-container end -->
+
+	</div>
+	<!-- 修改目录 -->
+	<div layout:fragment="function">			
+	<script type="text/javascript">
+	
+	$(function() {
+		/* 选择Topcoder标签  */
+		$('#topcoder').addClass("active");
+	});
+
+	var abilities = [];
+	var tagTemp = $("#tag")[0].value, tagBox = $("#abilities")[0];
+	
+	var pageId = 0, hasMore = new Boolean(0), total = 0;
+	
+	function orderByAbility(type){
+		if (type == 0) {
+			pageId = 1;
+		}
+		else if (type == -1){
+			if (pageId < 2) return;
+			pageId -= 1;
+		}else if(type == 1){
+			if (hasMore == 0) return;
+			pageId += 1;
+		}
+
+		$("#loading")[0].style.display = "block";
+		$.ajax({
+			type : "get",
+			async : false,
+			url : "/api/topcoder/OrderByAbility",
+			data : {
+				"tag" : abilities.join(','),
+				"pageId" : pageId,
+				"pageSize" : 10
+			},
+			dataType : "json",
+			success : function(data) {
+				if (data) {
+					var result = data.users;
+					hasMore = data.hasMore;
+					/* total = data.total_count;
+					$("#details").empty().append("共 <a>" + total + "</a> 个结果查询"); */
+					
+					var htmlList = '', htmlTemp = $("#list-item")[0].value;	
+					result.forEach(function(object) {
+						var link = object.photoLink;
+						if(link.length==0||link.substring(0, 4)=="/i/m"){
+							object.photoLink = "/images/avatar.jpg";
+						}
+					    htmlList += htmlTemp.temp(object);
+					});
+
+					$("#loading")[0].style.display = "none";
+					/* htmlList就是我们需要的HTML代码啦！ */
+					$("#list")[0].innerHTML = htmlList; 
+					/* 处理页码显示  */
+					$("#currentPage")[0].innerText = pageId;
+					if(pageId === 1){
+						$("#prePage").addClass("disabled");
+					}else {
+						$("#prePage").removeClass("disabled");
+					}
+					if(hasMore == 0){
+						$("#nextPage").addClass("disabled");
+					}else{
+						$("#nextPage").removeClass("disabled");
+					}
+				} else {
+					$("#details").empty().append("<h2>您查找的用户\"" + name + "\"不存在，请重新查找</h2>");
+				}
+			},
+			error : function(errorMsg) {
+				$("#details").empty().append("<h2>对不起，服务器请求失败！</h2>");
+			}
+		});
+	}
+	
+	</script>			
+		<datalist id="ability-list" >
+			<option value="java"/>
+			<option value="javascript"/>
+			<option value="html"/>
+			<option value="node.js"/>
+			<option value="css"/>
+			<option value="c#"/>
+			<option value="salesforce.com"/>
+			<option value="ibm bluemix"/>
+			<option value="ios"/>
+			<option value=".net"/>
+			<option value="swift"/>
+			<option value="html5"/>
+			<option value="xml"/>
+			<option value="python"/>
+			<option value="json"/>
+			<option value="nodejs"/>
+			<option value="angular.js"/>
+			<option value="api"/>
+			<option value="hpe haven ondemand"/>
+			<option value="j2ee"/>
+			<option value="heroku"/>
+			<option value="rest"/>
+			<option value="http"/>
+			<option value="apex"/>
+			<option value="spring"/>
+			<option value="web services"/>
+			<option value="cisco"/>
+			<option value="vertica"/>
+			<option value="data science"/>
+			<option value="jquery"/>
+			<option value="mysql"/>
+			<option value=".net 2.0"/>
+			<option value="hp haven"/>
+			<option value="mobile"/>
+			<option value="android"/>
+			<option value="visualforce"/>
+			<option value="jsp"/>
+			<option value="ajax"/>
+			<option value="bootstrap"/>
+			<option value="google"/>
+			<option value="sql"/>
+			<option value="jdbc"/>
+			<option value="asp.net"/>
+			<option value="sql server"/>
+			<option value="php"/>
+			<option value=".net 3.5"/>
+			<option value="ios 8.0"/>
+			<option value="oracle 10g"/>
+			<option value="java application"/>
+			<option value=".net 3.0"/>
+			<option value="aws"/>
+			<option value="c++"/>
+			<option value="c"/>
+			<option value="windows communication foundation"/>
+			<option value="salesforce"/>
+			<option value="struts"/>
+			<option value="ejb 3"/>
+			<option value="mongodb"/>
+			<option value="hibernate"/>
+			<option value="force.com"/>
+			<option value="servlet"/>
+			<option value="go"/>
+			<option value="javabean"/>
+			<option value="ibm db2"/>
+			<option value="postgresql"/>
+			<option value="ruby"/>
+			<option value="jpa"/>
+			<option value="xcode"/>
+			<option value="google api"/>
+			<option value="ibm websphere application server"/>
+			<option value="objective c"/>
+			<option value="ejb"/>
+			<option value="linux"/>
+			<option value="ec2"/>
+			<option value="ado.net"/>
+			<option value="sql server 2008"/>
+			<option value="express"/>
+			<option value="docusign"/>
+			<option value="phonegap"/>
+			<option value="iis"/>
+			<option value="windows server"/>
+			<option value="ruby on rails"/>
+			<option value="xsl"/>
+			<option value=".net 4.0"/>
+			<option value="junit"/>
+			<option value="force.com sites"/>
+			<option value="winforms controls"/>
+			<option value="wordpress"/>
+			<option value="microsoft azure"/>
+			<option value="android 2.2"/>
+			<option value="cloud foundry"/>
+			<option value="sql server 2000"/>
+			<option value="windows server 2003"/>
+			<option value="jsf"/>
+			<option value="ios 4.0"/>
+			<option value="dojo"/>
+			<option value="nosql"/>
+			<option value="wpf"/>
+			<option value="swing"/>
+			<option value="twitter bootstrap"/>
+			<option value="asp.net ajax"/>
+			<option value="jboss seam"/>
+			<option value="ios 5.0"/>
+			<option value="vb.net"/>
+			<option value="brivo labs"/>
+			<option value="flex"/>
+			<option value="smartsheet"/>
+			<option value="perl"/>
+			<option value="custom tag"/>
+			<option value="financialforce"/>
+			<option value="redis"/>
+			<option value="actionscript"/>
+			<option value="vb"/>
+			<option value="ios 6.0"/>
+			<option value="twilio"/>
+			<option value="google app engine"/>
+			<option value="lightning"/>
+			<option value="box"/>
+			<option value="uml"/>
+			<option value="ibm aix"/>
+			<option value="windows workflow foundation"/>
+			<option value="chatter"/>
+			<option value="mesh01"/>
+			<option value="ibm rational software architect"/>
+			<option value="docker"/>
+			<option value="reactjs"/>
+			<option value="word/rich text"/>
+			<option value="flash"/>
+			<option value=".net system.addins"/>
+			<option value="gaming"/>
+			<option value="active directory"/>
+			<option value="sfdc mobile"/>
+			<option value="castor"/>
+			<option value="ibm websphere mq"/>
+			<option value="ibm rational application developer"/>
+			<option value="ldap"/>
+			<option value="jms"/>
+			<option value="sharepoint 3.0"/>
+			<option value="j2me"/>
+			<option value="facebook"/>
+			<option value="use case diagrams (tcuml)"/>
+			<option value="commerce server 2009"/>
+			<option value="coffeescript"/>
+			<option value="eclipse plugin"/>
+			<option value="com"/>
+			<option value="pl/sql"/>
+			<option value="blackberry sdk"/>
+			<option value="illustrator"/>
+			<option value="remoting"/>
+			<option value="jquery mobile"/>
+			<option value="beanstalk"/>
+			<option value="elasticsearch"/>
+			<option value="microsoft silverlight"/>
+			<option value="photoshop"/>
+			<option value="msmq"/>
+			<option value="fortran"/>
+			<option value="apache derby"/>
+			<option value="oracle 9i"/>
+			<option value="play! framework"/>
+			<option value="backbone.js"/>
+			<option value="asp.net web parts"/>
+			<option value="activity diagrams (tcuml)"/>
+			<option value="xaml"/>
+			<option value="xul"/>
+			<option value="ibm lotus notes"/>
+			<option value="drools"/>
+			<option value="cloudfactor"/>
+			<option value="maven"/>
+			<option value="cobol"/>
+			<option value="applet"/>
+			<option value="osx"/>
+			<option value="r"/>
+			<option value="ssis"/>
+			<option value="android 2.1"/>
+			<option value="swt"/>
+			<option value="groovy"/>
+			<option value="midp 2.0"/>
+			<option value="sencha touch 2"/>
+			<option value="ibm lotus domino"/>
+			<option value="clickonce"/>
+			<option value="titanium"/>
+			<option value="android 2.0"/>
+			<option value="tvos"/>
+			<option value="ibm rational team concert"/>
+			<option value="jface"/>
+			<option value="ibm cognos"/>
+			<option value="ibm pl/1"/>
+			<option value="web application"/>
+			<option value="ibm rational data architect"/>
+			<option value="ibatis/mybatis"/>
+			<!--			
+			<option value="java"/>
+			<option value="javascript"/>
+			<option value="html"/>
+			<option value="node.js"/>
+			<option value="css"/>
+			<option value="c#"/>
+			<option value="salesforce.com"/>
+			<option value="ibm bluemix"/>
+			<option value="ios"/>
+			<option value=".net"/>
+			<option value="swift"/>
+			<option value="html5"/>
+			<option value="xml"/>
+			<option value="python"/>
+			<option value="json"/>
+			<option value="nodejs"/>
+			<option value="angular.js"/>
+			<option value="api"/>
+			<option value="hpe haven ondemand"/>
+			<option value="j2ee"/>
+			<option value="heroku"/>
+			<option value="rest"/>
+			<option value="http"/>
+			<option value="apex"/>
+			<option value="spring"/>
+			<option value="web services"/>
+			<option value="cisco"/>
+			<option value="vertica"/>
+			<option value="data science"/>
+			<option value="jquery"/>
+			<option value="mysql"/>
+			<option value=".net 2.0"/>
+			<option value="hp haven"/>
+			<option value="mobile"/>
+			<option value="android"/>
+			<option value="visualforce"/>
+			<option value="jsp"/>
+			<option value="ajax"/>
+			<option value="bootstrap"/>
+			<option value="google"/>
+			<option value="sql"/>
+			<option value="jdbc"/>
+			<option value="asp.net"/>
+			<option value="sql server"/>
+			<option value="php"/>
+			<option value=".net 3.5"/>
+			<option value="ios 8.0"/>
+			<option value="oracle 10g"/>
+			<option value="java application"/>
+			<option value=".net 3.0"/>
+			<option value="aws"/>
+			<option value="c++"/>
+			<option value="c"/>
+			<option value="windows communication foundation"/>
+			<option value="salesforce"/>
+			<option value="struts"/>
+			<option value="ejb 3"/>
+			<option value="mongodb"/>
+			<option value="hibernate"/>
+			<option value="force.com"/>
+			<option value="servlet"/>
+			<option value="go"/>
+			<option value="javabean"/>
+			<option value="ibm db2"/>
+			<option value="postgresql"/>
+			<option value="ruby"/>
+			<option value="jpa"/>
+			<option value="xcode"/>
+			<option value="google api"/>
+			<option value="ibm websphere application server"/>
+			<option value="objective c"/>
+			<option value="ejb"/>
+			<option value="linux"/>
+			<option value="ec2"/>
+			<option value="ado.net"/>
+			<option value="sql server 2008"/>
+			<option value="express"/>
+			<option value="docusign"/>
+			<option value="phonegap"/>
+			<option value="iis"/>
+			<option value="windows server"/>
+			<option value="ruby on rails"/>
+			<option value="xsl"/>
+			<option value=".net 4.0"/>
+			<option value="junit"/>
+			<option value="force.com sites"/>
+			<option value="winforms controls"/>
+			<option value="wordpress"/>
+			<option value="microsoft azure"/>
+			<option value="android 2.2"/>
+			<option value="cloud foundry"/>
+			<option value="sql server 2000"/>
+			<option value="windows server 2003"/>
+			<option value="jsf"/>
+			<option value="ios 4.0"/>
+			<option value="dojo"/>
+			<option value="nosql"/>
+			<option value="wpf"/>
+			<option value="swing"/>
+			<option value="twitter bootstrap"/>
+			<option value="asp.net ajax"/>
+			<option value="jboss seam"/>
+			<option value="ios 5.0"/>
+			<option value="vb.net"/>
+			<option value="brivo labs"/>
+			<option value="flex"/>
+			<option value="smartsheet"/>
+			<option value="perl"/>
+			<option value="custom tag"/>
+			<option value="financialforce"/>
+			<option value="redis"/>
+			<option value="actionscript"/>
+			<option value="vb"/>
+			<option value="ios 6.0"/>
+			<option value="twilio"/>
+			<option value="google app engine"/>
+			<option value="lightning"/>
+			<option value="box"/>
+			<option value="uml"/>
+			<option value="ibm aix"/>
+			<option value="windows workflow foundation"/>
+			<option value="chatter"/>
+			<option value="mesh01"/>
+			<option value="ibm rational software architect"/>
+			<option value="docker"/>
+			<option value="reactjs"/>
+			<option value="word/rich text"/>
+			<option value="flash"/>
+			<option value=".net system.addins"/>
+			<option value="gaming"/>
+			<option value="active directory"/>
+			<option value="sfdc mobile"/>
+			<option value="castor"/>
+			<option value="ibm websphere mq"/>
+			<option value="ibm rational application developer"/>
+			<option value="ldap"/>
+			<option value="jms"/>
+			<option value="sharepoint 3.0"/>
+			<option value="j2me"/>
+			<option value="facebook"/>
+			<option value="use case diagrams (tcuml)"/>
+			<option value="commerce server 2009"/>
+			<option value="coffeescript"/>
+			<option value="eclipse plugin"/>
+			<option value="com"/>
+			<option value="pl/sql"/>
+			<option value="blackberry sdk"/>
+			<option value="illustrator"/>
+			<option value="remoting"/>
+			<option value="jquery mobile"/>
+			<option value="beanstalk"/>
+			<option value="elasticsearch"/>
+			<option value="microsoft silverlight"/>
+			<option value="photoshop"/>
+			<option value="msmq"/>
+			<option value="fortran"/>
+			<option value="apache derby"/>
+			<option value="oracle 9i"/>
+			<option value="play! framework"/>
+			<option value="backbone.js"/>
+			<option value="asp.net web parts"/>
+			<option value="activity diagrams (tcuml)"/>
+			<option value="xaml"/>
+			<option value="xul"/>
+			<option value="ibm lotus notes"/>
+			<option value="drools"/>
+			<option value="cloudfactor"/>
+			<option value="maven"/>
+			<option value="cobol"/>
+			<option value="applet"/>
+			<option value="osx"/>
+			<option value="r"/>
+			<option value="ssis"/>
+			<option value="android 2.1"/>
+			<option value="swt"/>
+			<option value="groovy"/>
+			<option value="midp 2.0"/>
+			<option value="sencha touch 2"/>
+			<option value="ibm lotus domino"/>
+			<option value="clickonce"/>
+			<option value="titanium"/>
+			<option value="android 2.0"/>
+			<option value="tvos"/>
+			<option value="ibm rational team concert"/>
+			<option value="jface"/>
+			<option value="ibm cognos"/>
+			<option value="ibm pl/1"/>
+			<option value="web application"/>
+			<option value="ibm rational data architect"/>
+			<option value="ibatis/mybatis"/>
+			  -->
+	</datalist>
+	</div>
+
+
+</body>
+
+</html>

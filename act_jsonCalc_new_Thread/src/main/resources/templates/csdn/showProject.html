@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	data-layout-decorate="~{header-footer}">
+
+<head>
+<meta charset="utf-8">
+	<script src="/js/dist/echarts.js"></script>
+</head>
+
+<body>
+
+	<div layout:fragment="content" class="show-project container">
+	
+		<div id="Id" hidden th:text="${Id}"></div>		
+		<h1>
+			<span class="tips" th:text="${type}" style="vertical-align:top"></span>
+			<span th:text="${title}"></span>
+			<a style="color:#ea9999" th:href="'javascript:window.open(\'/csdn/showUser?userId='+${userID}+'\')'" th:text="'（'+${userID}+'）'"></a>
+		</h1>
+		<div class="project-info">
+			<div class="platform">
+				<a th:href="'javascript:window.open(\''+${link}+'\')'"><i class="fa fa-home pr-5"></i>CSDN</a>
+			</div>
+			<div>
+				<span th:text="${date}"></span>
+				<i class="fa fa-eye pr-10 pl-20"></i><span th:text="${num_read}+' 人阅读'"></span>
+				<i class="fa fa-thumbs-o-up pr-10 pl-20"></i><span th:text="${num_ding}"></span>
+				<i class="fa fa-thumbs-o-down pr-10 pl-20"></i><span th:text="${num_cai}"></span>						
+				<i class="fa fa-comment-o pr-10 pl-20"></i><span th:text="'评论（'+${num_comment}+'）'"></span>
+				<i class="fa fa-heart-o pr-10 pl-20"></i><span th:text="'收藏（'+${num_comment}+'）'"></span>
+			</div>
+		</div>
+		
+		<div class="title">协作关系</div>
+		<div class="space-top"></div>
+		<div id="graph-details"></div>
+		<div id="graph" style="height:600px;width:1140px">此位置显示关系图谱</div>
+		<div class="space-bottom"></div>
+	</div>
+	<!-- 修改目录 -->
+	<div layout:fragment="function">
+		<script type="text/javascript">
+			var Id = $("#Id")[0].innerText;
+			
+	        // 路径配置
+            require.config({
+                paths: {
+                    echarts: '/js/dist'
+                }
+            });
+            
+            // 使用
+            require(
+                [
+                    'echarts',
+                    'echarts/chart/force' 
+                ],
+                function (ec) {
+                    // 基于准备好的dom，初始化echarts图表
+                    var myGraph = ec.init(document.getElementById('graph')); 
+	                myGraph.showLoading({ text : "Loading..." });
+                    					                    
+    				var option = optionGraph;
+
+    	 			$.ajax({ 
+    	               type : "get", 
+    	               async : true, //异步执行
+    	               url : "/api/csdn/subBlogGraph", 
+    	               data : {
+    	            	   "blogId" : Id,
+    	            	   "limit" : 100
+   	            	   }, 
+    	               dataType : "json", //返回数据形式为json
+    	               success : function(data) { 
+    	                   if (data) { 
+    	                	   var cat = [{name: 'Author', itemStyle: style[0][0]},{name: 'Commenter', itemStyle: style[0][1]}], nodes = [], links = [];    		                   	
+    		                   	for(var item in data.nodes){
+    		                   		nodes.push(data.nodes[item]);
+    		                   	}
+    		                   	for(var item in data.links){
+    		                   		var temp = {source : 0, target : 1, weight : 1, name : "cooperate 1 time", history: [{name:"titl1",url:"#"}], itemStyle: style[1][0]};
+    		                   		var link = data.links[item];
+    		                   		temp.target = link.target;
+    		                   		temp.source = link.source;
+    		                   		temp.weight = link.weight;
+    		                   		temp.name = link.name;
+    		                   		temp.history = link.history;
+    		                   		temp.itemStyle = style[1][link.type];
+    		                   		links.push(temp);
+    		                   	}
+    		                   	option.tooltip.formatter = '{b}';
+    		                   	option.series[0].minRadius = 10;
+    		                   	option.series[0].maxRadius = 15;
+    		                   	if(nodes.length>50) option.series[0].itemStyle.normal.label.show = false;
+    		                   	option.series[0].itemStyle.normal.linkStyle.width = 1;
+    		                   	//option.series[0].linkSymbol = 'none';
+    		                   	option.legend.data = ['Author','Commenter'];
+    		                   	option.series[0].categories = cat;
+    		                   	option.series[0].nodes = nodes;
+    		                   	option.series[0].links = links;
+    		                   	
+    			                myGraph.setOption(option); 
+    			                myGraph.hideLoading();
+    	                   }
+    	               }, 
+    	               error : function(errorMsg) { 
+    						$("#graph-details").empty().append("<h2>对不起，数据请求失败！</h2>");
+    	               } 
+    	            });   
+    				
+    				var ecConfig = require('echarts/config');
+    				function focus(param) {
+    				    var data = param.data;
+    				    var links = option.series[0].links;
+    				    var nodes = option.series[0].nodes;
+    				    if (
+    				        data.source != null
+    				        && data.target != null
+    				    ) { //点击的是边
+    				        var sourceNode = nodes[data.source];
+    				        var targetNode = nodes[data.target];
+    				        console.log("选中了边 " + sourceNode.name + ' -> ' + targetNode.name + ' (' + data.weight + ')');
+    				    } else { // 点击的是点
+    				        console.log("选中了" + data.name + '(' + data.value + ')');
+    				    }
+    				}
+    				myGraph.on(ecConfig.EVENT.CLICK, focus)
+    				
+    				myGraph.on(ecConfig.EVENT.FORCE_LAYOUT_END, function () {
+    				});                  
+            
+                }
+            );
+		</script>
+	</div>
+
+</body>
+
+</html>

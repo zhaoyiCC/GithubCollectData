@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+	data-layout-decorate="~{header-footer}">
+
+<head>
+<meta charset="utf-8">
+</head>
+
+<body>
+
+	<div layout:fragment="content">
+
+		<!-- main-container start -->
+		<!-- ================ -->
+		<section class="main-container">
+
+			<div class="container">
+			
+				<ul class="nav nav-tabs" role="tablist">
+					<li><a href="/searchUsers">ALL</a></li>
+					<li><a href="/github/searchUsers"><small>Github</small></a></li>
+					<li class="active"><a href="/stackoverflow/searchUsers"><small>Stackoverflow</small></a></li>
+					<li><a href="/topcoder/searchUsers"><small>Topcoder</small></a></li>
+					<li><a href="/csdn/searchUsers"><small>CSDN</small></a></li>
+				</ul>				
+				
+				<form class="form-inline" role="form" action="javascript:searchUser(0);">			
+					<select class="form-control" style="width:200px">
+						<option>By Profile</option>
+						<option>By Skills</option>
+					</select>		
+					<div class="form-group has-feedback">
+						<input id="userId" type="text" class="form-control" placeholder="Search Users" style="width:800px">
+						<i class="fa fa-search form-control-feedback"></i>
+					</div>
+				</form>	
+				
+				<div id="details" style="text-align:center">
+					<img name="loading" id="loading" src="/images/loader.gif" style="display:none; width: 200px; margin-left: 40%;"></img>	
+				</div>
+				<!-- html模板  start -->
+				<textarea style="display:none;">				
+					<div class="list-with-image">
+						<div class="overlay-container">
+							<img src="/images/avatar.jpg" alt="用户头像"> 
+							<a href="javascript:window.open('http://stackoverflow.com/users/$id$/$displayName$')" class="overlay small"> </a>
+						</div>
+						<div class="profile">
+							<h2>$displayName$<a href="javascript:window.open('http://stackoverflow.com/users/$id$/$displayName$')" class="btn btn-wo btn-light-gray">stackoverflow</a></h2>
+							<p class="small"><i class="fa fa-map-marker pr-10"></i>$location$</p>
+						</div>
+						<button onclick="javascript:window.open('/stackoverflow/showUser?id=$id$')" class="btn btn-white">能力分析</button>
+					</div>			
+				</textarea>							
+				<!-- html模板 end -->	
+				
+				<div  id="list" style="margin-top:20px">				
+				</div>
+				
+				<div class="clearfix"></div>
+				
+				<!-- pagination start -->
+				<ul class="pagination">
+					<li><a href="javascript:searchUser(-1);"><<</a></li>
+					<li><a href="#">1</a></li>
+					<li><a href="#">2</a></li>
+					<li>...</li>
+					<li><a href="#">5</a></li>
+					<li><a href="#">6</a></li>
+					<li class="active"><a href="#">7 <span class="sr-only">(current)</span></a></li>
+					<li><a href="#">8</a></li>
+					<li><a href="#">9</a></li>
+					<li>...</li>
+					<li><a href="#">99</a></li>
+					<li><a href="#">100</a></li>
+					<li><a href="javascript:searchUser(1);">>></a></li>
+				</ul>
+				<!-- pagination end -->			
+			
+			</div>
+		</section>
+		<!-- main-container end -->
+
+	</div>
+	<!-- 修改目录 -->
+	<div layout:fragment="function">			
+	<script type="text/javascript">
+	
+	$(function() {
+		/* 选择Stackoverflow标签  */
+		$('#stackoverflow').addClass("active");
+	});
+	
+	var name = '', pageId = 0, hasMore = new Boolean(0), total = 0;
+	
+	function searchUser(type){
+		if (type === 0) {
+			name = $("#userId")[0].value;
+			pageId = 1;
+		}
+		else if (type === -1){
+			if (pageId < 2) return;
+			pageId -= 1;
+		}else if(type === 1){
+			if (hasMore == 0) return;
+			pageId += 1;
+		}
+
+		$("#loading")[0].style.display = "block";
+		
+		$.ajax({
+			type : "get",
+			async : false,
+			url : "/api/stackoverflow/SearchUser1",
+			data : {
+				"name" : name,
+				"pageId" : pageId,
+				"pageSize" : 10
+			},
+			dataType : "json",
+			success : function(data) {
+				if (data) {
+					var result = data.users;
+					hasMore = data.hasMore;
+					/* total = data.total_count;
+					$("#details").empty().append("共 <a>" + total + "</a> 个结果查询"); */
+					
+					var htmlList = '', htmlTemp = $("textarea")[0].value;				
+					result.forEach(function(object) {	
+						if(object.profileImageUrl.length==0){
+							object.profileImageUrl = "/images/avatar.jpg";
+						}
+					    htmlList += htmlTemp.temp(object);
+					});
+
+					$("#loading")[0].style.display = "none";
+					/* htmlList就是我们需要的HTML代码啦！ */
+					$("#list")[0].innerHTML = htmlList; 
+					/* 处理页码显示  */
+					$("#currentPage")[0].innerText = pageId;
+					if(pageId === 1){
+						$("#prePage").addClass("disabled");
+					}else {
+						$("#prePage").removeClass("disabled");
+					}
+					if(hasMore == 0){
+						$("#nextPage").addClass("disabled");
+					}else{
+						$("#nextPage").removeClass("disabled");
+					}
+				} else {
+					$("#details").empty().append("<h2>您查找的用户\"" + name + "\"不存在，请重新查找</h2>");
+				}
+			},
+			error : function(errorMsg) {
+				$("#details").empty().append("<h2>对不起，服务器请求失败！</h2>");
+			}
+		});
+	}
+	
+	</script>			
+	</div>
+
+
+</body>
+
+</html>
